@@ -17,8 +17,7 @@ pub async fn create_order(
     order: &LimitOrder,
     provider: &Provider,
 ) -> (Predicate, Input) {
-    let x : (u64,u8) = (313131,232);
-    create_predicate(x.0, x.0, x.1, x.0, x.0, x.0, x.1, x.0, x.0, x.0);
+    create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570", "1_000_000", "0u8", maker.address(), order.maker_amount, order.taker_amount, order.maker_token, order.taker_token,"salt.to_string()");
     let predicate_bytecode = compile_to_bytes("order-predicate.sw", true).into_bytes();
     let predicate = Predicate::new(predicate_bytecode.clone());
     let predicate_root = Address::from(*Contract::root_from_code(predicate_bytecode.clone()));
@@ -60,7 +59,9 @@ pub async fn verify_balance_of_maker_and_predicate(
     let balance = maker.get_asset_balance(&asset).await.unwrap();
     let predicate_balance = provider.get_asset_balance(predicate, asset).await.unwrap();
     assert!(balance == 0);
+    println!("{}", balance);
     assert!(predicate_balance == amount);
+    println!("{}",predicate_balance);
 }
 
 pub async fn take_order(
@@ -74,6 +75,7 @@ pub async fn take_order(
         .get_coins(&taker.address(), AssetId::default())
         .await
         .unwrap()[0];
+
     let taker_coin_input = Input::CoinSigned {
         utxo_id: UtxoId::from(input_coins.utxo_id.clone()),
         owner: taker.address().into(),

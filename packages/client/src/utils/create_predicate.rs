@@ -6,6 +6,7 @@ use std::io::Write;
 use forc_pkg::PackageManifestFile;
 use regex::{Captures , Regex};
 use std::{io::Read, path::PathBuf};
+fuels::core::types::Bits256;
 
 
 pub fn compile_to_bytes(
@@ -52,9 +53,10 @@ pub fn compile_to_bytes(
 
     output
 }
-pub fn create_predicate(spending_script_hash:u64, min_gas:u64, output_coin_index:u8, maker_address:u64, maker_amount:u64, taker_amount:u64, salt: u8, maker_token:u64, taker_token:u64, msg_sender: u64) {
+pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Bits256, maker_amount:String, taker_amount:String,  maker_token:Bits256, taker_token:Bits256, salt: String) {
 let template =
     format!("predicate;
+
     use std::{{
         b512::B512,
         constants::ZERO_B256,
@@ -66,7 +68,7 @@ let template =
     
     // update this with the script for spending
     const SPENDING_SCRIPT_HASH = {};
-    // const MIN_GAS = {};
+    const MIN_GAS = {};
     const OUTPUT_COIN_INDEX = {};
     fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {{
         // parameterize this 
@@ -79,10 +81,6 @@ let template =
             salt: {},
         }};
     
-        // handle cancellations
-        if(msg_sender == order.maker){{
-            true
-        }}
         ////////////
         // INPUTS //
         ////////////
@@ -171,9 +169,8 @@ let template =
     }}
     fn output_coin_to(index: u64) -> b256 {{
         __gtf::<b256>(index, GTF_OUTPUT_COIN_TO)
-    }}
-    
-", &spending_script_hash, &min_gas, &output_coin_index, &maker_address, 
+    }}"
+    , &spending_script_hash, &min_gas, &output_coin_index, &maker_address, 
    &maker_amount, &taker_amount, &salt, &maker_token, &taker_token);
 
     let path = Path::new("order-predicate.sw");

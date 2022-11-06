@@ -8,14 +8,12 @@ source = 'path+from-root-DB177922C03D9FB0'
 dependencies = ['std']
 
 [[package]]
-name = 'order'
-source = 'path+from-root-DB177922C03D9FB0'
-dependencies = ['std']
-
-[[package]]
 name = 'order-script'
-source = 'root'
-dependencies = ['std']
+source = 'member'
+dependencies = [
+    'order',
+    'std',
+]
 
 [[package]]
 name = 'std'

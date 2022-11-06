@@ -9,17 +9,17 @@ predicate;
     use order::*;
     
     // update this with the script for spending
-    const SPENDING_SCRIPT_HASH = 313131;
+    const SPENDING_SCRIPT_HASH = 0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570;
     // const MIN_GAS = 313131;
-    const OUTPUT_COIN_INDEX = 232;
+    const OUTPUT_COIN_INDEX = 313131;
     fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
         // parameterize this 
         let order = LimitOrder {
-            maker: Address::from(313131),
+            maker: Address::from(232),
             maker_amount: 313131,
             taker_amount: 313131,
-            maker_token: 232,
-            taker_token: 313131,
+            maker_token: 313131,
+            taker_token: 232,
             salt: 313131,
         };
     
