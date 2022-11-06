@@ -9,11 +9,19 @@ source = 'path+from-root-3C5654AAC7C2B902'
 dependencies = ['std']
 
 [[package]]
+name = 'order'
+source = 'path+from-root-3C5654AAC7C2B902'
+dependencies = ['std']
+
+[[package]]
 name = 'order-logger'
 source = 'root'
 dependencies = [
     'order',
+    
+    'order',
     'std',
+,
 ]
 
 [[package]]
