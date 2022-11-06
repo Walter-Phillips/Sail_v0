@@ -81,7 +81,9 @@ let template =
         }};
     
         // handle cancellations
-        let msg_sender = {}
+        if(msg_sender == order.maker){
+            true
+        }
         ////////////
         // INPUTS //
         ////////////

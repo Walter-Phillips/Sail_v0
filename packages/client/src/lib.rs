@@ -9,7 +9,9 @@ mod utils {
 use fuels::{
     prelude::*, 
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
+    test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
 };
+
 use rand::Fill;
 use fuel_core_interfaces::model::Coin;
 use fuels_core::constants::BASE_ASSET_ID;
@@ -18,8 +20,8 @@ mod success {
 
     #[tokio::test]
     async fn test_make_order_predicate() {
-        let mut wallet0 = LocalWallet::new_random(None);
-        let mut wallet1 = LocalWallet::new_random(None);
+        let mut wallet0 = Wallet::new_random(None);
+        let mut wallet1 = Wallet::new_random(None);
     
         let asset_base = AssetConfig {
             id: BASE_ASSET_ID,
