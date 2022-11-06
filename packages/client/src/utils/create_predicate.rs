@@ -6,7 +6,7 @@ use std::io::Write;
 use forc_pkg::PackageManifestFile;
 use regex::{Captures , Regex};
 use std::{io::Read, path::PathBuf};
-fuels::core::types::Bits256;
+use fuels::core::types::Bits256;
 
 
 pub fn compile_to_bytes(
