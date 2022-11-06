@@ -1,16 +1,10 @@
-use std::mem::size_of;
-
-use super::builder::build_take_order_tx;
-use super::builder::LimitOrder;
-use fuel_core_interfaces::common::fuel_crypto::SecretKey;
-use fuel_core_interfaces::model::Coin;
 use fuels::{
+    prelude::{abigen, TxParameters, WalletUnlocked},
+    tx::{Address, AssetId, Input, Output, Transaction, Receipt},
     contract::script::Script,
-    prelude::{Provider, abigen, TxParameters, WalletUnlocked},
-    signers::{Signer, WalletUnlocked},
-    test_helpers::{setup_single_asset_coins, setup_test_client, Config},
-    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
+
 };
+
 abigen!(
     LimitOrderStruct,
     "packages/contracts/order-logger/out/debug/order-logger-abi.json"
