@@ -4,17 +4,17 @@ use fuels::{
 };
 abigen!(
     LimitOrderStruct,
-    "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
+    "packages/contracts/order-logger/out/debug/order-logger-abi.json"
 );
 
 const MIN_GAS: u64 = 100_000;
-const TAKE_ORDER_SCRIPT_BINARY: &str = "../order-script/out/debug/order-script.bin";
+const TAKE_ORDER_SCRIPT_BINARY: &str = "packages/contracts/order-script/out/debug/order-script.bin";
 pub async fn get_take_order_script() -> Vec<u8> {
     let script_bytecode = std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap();
     script_bytecode
 }
 
-pub async fn build_take_order_tx(
+async fn build_take_order_tx(
     order: &LimitOrder,
     taker: Address,
     gas_coin: Input,
@@ -56,4 +56,33 @@ pub async fn build_take_order_tx(
         witnesses: vec![],
         metadata: None,
     }
+}
+
+pub async fn take_order(
+    order: &LimitOrder,
+    wallet: &WalletUnlocked,
+    gas_coin: Input,
+    predicate_coins_input: Input,
+    optional_inputs: &[Input],
+    optional_outputs: &[Output],
+) -> Vec<Receipt> {
+    let mut tx = build_take_order_tx(
+        order,
+        wallet.address().into(),
+        gas_coin,
+        predicate_coins_input,
+        optional_inputs,
+        optional_outputs,
+        TxParameters::default(),
+    )
+    .await;
+
+    sign_and_call_tx(wallet, &mut tx).await
+}
+
+async fn sign_and_call_tx(wallet: &WalletUnlocked, tx: &mut Transaction) -> Vec<Receipt> {
+    let provider = wallet.get_provider().unwrap();
+    wallet.sign_transaction(tx).await.unwrap();
+    let script = Script::new(tx.clone());
+    script.call(provider).await.unwrap()
 }
