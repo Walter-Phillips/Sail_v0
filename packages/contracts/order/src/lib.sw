@@ -1,4 +1,6 @@
+//just a library
 library order;
+
 abi OrderSettler {
     fn take(order: LimitOrder);
     fn make(order: LimitOrder);

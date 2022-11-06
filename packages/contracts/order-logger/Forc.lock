@@ -3,7 +3,7 @@ name = 'core'
 source = 'path+from-root-0EEC2240A883E0FE'
 
 [[package]]
-name = 'order'
+name = 'order-logger'
 source = 'member'
 dependencies = ['std']
 
