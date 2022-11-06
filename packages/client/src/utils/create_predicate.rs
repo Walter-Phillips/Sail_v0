@@ -1,19 +1,18 @@
-
 use std::fs::File;
-//use std::io::prelude::*;
 use std::path::Path;
+use std::io::Write;
 
 use anyhow::Result;
 use forc_pkg::BuiltPackage;
 use forc_pkg::PackageManifestFile;
 use regex::{Captures , Regex};
-use std::{fmt::Write, io::Read, path::PathBuf};
-// use fuels::{tx::Address};
+use std::{fmt::Write as OtherWrite, io::Read, path::PathBuf};
+
 
 pub fn compile_to_bytes(
     file_name: &str,
     capture_output: bool,
-) -> (Result<BuiltPackage>, String) {
+) -> (String) {
     tracing::info!(" Compiling {}", file_name);
 
     let mut buf_stdout: Option<gag::BufferRedirect> = None;
@@ -25,24 +24,9 @@ pub fn compile_to_bytes(
     }
 
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
-    let path = format!(
-        "{}/src/e2e_vm_tests/test_programs/{}",
-        manifest_dir, file_name
-    );
-    let manifest = PackageManifestFile::from_dir(&PathBuf::from(path)).unwrap();
-    let result = forc_pkg::build_package_with_options(
-        &manifest,
-        forc_pkg::BuildOpts {
-            pkg: forc_pkg::PkgOpts {
-                path: Some(format!(
-                    "{}/src/e2e_vm_tests/test_programs/{}",
-                    manifest_dir, file_name
-                )),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
-    );
+    let path = format!("src/{}",file_name);
+    let manifest = PackageManifestFile::from_dir(&PathBuf::from(path));
+
 
     let mut output = String::new();
     if capture_output {
@@ -55,9 +39,6 @@ pub fn compile_to_bytes(
 
         // Capture the result of the compilation (i.e., any errors Forc produces) and append to
         // the stdout from the compiler.
-        if let Err(ref e) = result {
-            write!(output, "\n{}", e).expect("error writing output");
-        }
 
         if cfg!(windows) {
             // In windows output error and warning path files start with \\?\
@@ -71,9 +52,8 @@ pub fn compile_to_bytes(
         }
     }
 
-    (result, output)
+    output
 }
-
 pub fn create_predicate(SPENDING_SCRIPT_HASH:u64, MIN_GAS:u64, OUTPUT_COIN_INDEX:u8, MAKER_ADDRESS:u64, MAKER_AMOUNT:u64, TAKER_AMOUNT:u64, SALT: u8, MAKER_TOKEN:u64, TAKER_TOKEN:u64, MSG_SENDER: u64) {
 let template =
     format!("predicate;
