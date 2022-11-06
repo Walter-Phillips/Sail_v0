@@ -2,7 +2,7 @@
 
 ## Overview
 Sail is a central limit orderbook built on Fuel. This implementation of an order book uses predicates. This adds some complexity to implementing an orderbook
-but has very favouable outcomes when trying to build an orderbook that tends towards decentralization. We have a client where someone can call a make order
+but has very favouable outcomes when trying to build an orderbook that tends towards decentralization while maintaining high transaction speeds and low gas fees. We have a client where someone can call a make order
 or take order function. The make order function dynamically creates a predicate that holds a UTXO of a set amount at a set limit. Takers can then call the
 take order function fullfiling the given UTXO transferring the funds to the maker and taker. This approach allows for no state bloat meaning that hardware
 requirements to run validators are likely to stay low meaning more decentralization. For order-matching we intend to leave that up to a set of 
