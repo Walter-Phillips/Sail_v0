@@ -3,7 +3,7 @@ use fuels::{prelude::*, tx::ContractId};
 use rand::Fill;
 // Load abi from json
 abigen!(MyContract, "out/debug/order-abi.json");
-use crate::{utiles::environment as env, order::order as ord};
+use crate::{utils::environment as env, order::order as ord};
 
 async fn get_contract_instance() -> (MyContract, ContractId) {
     // Launch a local network and deploy the contract

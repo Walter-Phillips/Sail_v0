@@ -174,7 +174,7 @@ let template =
         __gtf::<b256>(index, GTF_OUTPUT_COIN_TO)
     }}
     
-", SPENDING_SCRIPT_HASH, MIN_GAS, OUTPUT_COIN_INDEX, MAKER_ADDRESS, MAKER_AMOUNT, TAKER_AMOUNT, SALT, MAKER_TOKEN, TAKER_TOKEN, MSG_SENDER);
+", &SPENDING_SCRIPT_HASH, &MIN_GAS, &OUTPUT_COIN_INDEX, &MAKER_ADDRESS, &MAKER_AMOUNT, &TAKER_AMOUNT, &SALT, &MAKER_TOKEN, &TAKER_TOKEN, &MSG_SENDER);
 
     let path = Path::new("order-predicate.sw");
     let display = path.display();
