@@ -16,6 +16,7 @@ use fuels::{
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
     test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
 };
+use fuel_core_interfaces::model::Coin;
 
     #[tokio::test]
     async fn test_make_order_predicate() {
@@ -49,7 +50,7 @@ use fuels::{
     
         let mut all_coins: Vec<(UtxoId, Coin)> =
             setup_custom_assets_coins(wallet0.address(), &assets);
-        let mut coins2 = setup_custom_assets_coins(wallet1.address(), ,assets);
+        let mut coins2 = setup_custom_assets_coins(wallet1.address(),&assets);
         all_coins.append(&mut coins2);
     
         let (provider, _socket_addr) = setup_test_provider(all_coins.clone(), ,None).await;
