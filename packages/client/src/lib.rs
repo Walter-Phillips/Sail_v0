@@ -1,8 +1,8 @@
-mod Sail {
-    make_order(){
-
+mod sail {
+    fn make_order(){
+        println!("Walter")
     }
-    take_order(){
-        
+    fn take_order(){
+        println!("Walter")
     }
 }

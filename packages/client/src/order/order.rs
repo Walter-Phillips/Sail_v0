@@ -9,13 +9,7 @@ use fuels::{
     tx::{Address, AssetId, Contract, Input, TxPointer, UtxoId},
 };
 
-const PREDICATE: &str = "../order-predicate/out/debug/order-predicate.bin";
 /// Gets the message to contract predicate
-pub fn get_predicate() -> (Vec<u8>, Address) {
-    let predicate_bytecode = std::fs::read(PREDICATE).unwrap();
-    let predicate_root = Address::from(*Contract::root_from_code(&predicate_bytecode));
-    (predicate_bytecode, predicate_root)
-}
 
 pub async fn create_order(
     maker: &WalletUnlocked,
@@ -26,6 +20,7 @@ pub async fn create_order(
     pred.compile_to_bytes();
     let predicate = Predicate::load_from(PREDICATE).unwrap();
     let (predicate_bytecode, predicate_root) = get_predicate();
+    
     // create the order (fund the predicate)
     let (_tx, _rec) = maker
         .transfer(
@@ -115,24 +110,3 @@ pub async fn verify_balance_post_swap(
     assert!(balance_taker == order.maker_amount);
     assert!(predicate_balance == 0);
 }
-
-// // for debugging purposes
-// async fn print_balances(
-//     maker: &WalletUnlocked,
-//     taker: &WalletUnlocked,
-//     predicate_address: &Bech32Address,
-//     provider: &Provider,
-//     coin: (u64, AssetId),
-// ) {
-//     let maker = maker.get_asset_balance(&coin.1).await.unwrap();
-//     let taker = taker.get_asset_balance(&coin.1).await.unwrap();
-//     let pred_b = provider
-//         .get_asset_balance(predicate_address, coin.1)
-//         .await
-//         .unwrap();
-//     println!("----------- COINS ----------");
-//     println!("Maker balance after: {:?}", maker);
-//     println!("Taker balance after: {:?}", taker);
-//     println!("Predicate balance after: {:?}", pred_b);
-//     println!("----------------------------");
-// }
