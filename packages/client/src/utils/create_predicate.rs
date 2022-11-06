@@ -6,7 +6,7 @@ use std::io::Write;
 use forc_pkg::PackageManifestFile;
 use regex::{Captures , Regex};
 use std::{io::Read, path::PathBuf};
-fuels::core::types::Bits256;
+use fuels::core::types::Bits256;
 
 
 pub fn compile_to_bytes(
@@ -24,9 +24,6 @@ pub fn compile_to_bytes(
     }
 
     let path = format!("src/{}",file_name);
-
-
-
     let mut output = String::new();
     if capture_output {
         let mut buf_stdout = buf_stdout.unwrap();
@@ -50,9 +47,9 @@ pub fn compile_to_bytes(
                 .to_string();
         }
     }
-
     output
 }
+
 pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Bits256, maker_amount:String, taker_amount:String,  maker_token:Bits256, taker_token:Bits256, salt: String) {
 let template =
     format!("predicate;
@@ -102,8 +99,6 @@ let template =
         assert(output_coin_asset_id(OUTPUT_COIN_INDEX) == order.taker_token);
         assert(output_coin_amount(OUTPUT_COIN_INDEX) >= order.taker_amount);
     
-        // this is the one that is failing, its because maker above is set to 0, which is incorrect
-        // just need to pass this thing in args (along with all other params)
         assert(output_coin_to(OUTPUT_COIN_INDEX) == order.maker.into());
         true
     }}
@@ -150,7 +145,7 @@ let template =
     /// Get the transaction outputs count
     const GTF_SCRIPT_OUTPUTS_COUNT = 0x008;
     const GTF_OUTPUT_TYPE = 0x201;
-    const OUTPUT_TYPE_COIN = 0u8; // again... not sure aboue this type here. 
+    const OUTPUT_TYPE_COIN = 0u8; 
     const GTF_OUTPUT_COIN_TO: u64 = 0x202;
     const GTF_OUTPUT_COIN_AMOUNT: u64 = 0x203;
     const GTF_OUTPUT_COIN_ASSET_ID: u64 = 0x204;
