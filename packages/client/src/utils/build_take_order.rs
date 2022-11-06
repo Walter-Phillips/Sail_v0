@@ -1,6 +1,15 @@
+use std::mem::size_of;
+
+use super::builder::build_take_order_tx;
+use super::builder::LimitOrder;
+use fuel_core_interfaces::common::fuel_crypto::SecretKey;
+use fuel_core_interfaces::model::Coin;
 use fuels::{
-    prelude::{abigen, TxParameters},
-    tx::{Address, AssetId, Input, Output, Transaction},
+    contract::script::Script,
+    prelude::{Provider, abigen, TxParameters, WalletUnlocked},
+    signers::{Signer, WalletUnlocked},
+    test_helpers::{setup_single_asset_coins, setup_test_client, Config},
+    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
 };
 abigen!(
     LimitOrderStruct,
@@ -58,7 +67,7 @@ async fn build_take_order_tx(
     }
 }
 
-pub async fn take_order(
+pub async fn inner_take_order(
     order: &LimitOrder,
     wallet: &WalletUnlocked,
     gas_coin: Input,

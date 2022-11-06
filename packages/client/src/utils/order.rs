@@ -1,8 +1,7 @@
 //create the make order and the take order
 
-use crate::utils::builder::LimitOrder;
-use crate::utils::environment as env;
-use crate::utils::pred;
+use crate::utils::build_take_order::*;
+use crate::utils::create_predicate::*;
 
 use fuels::{
     contract::predicate::Predicate,
@@ -18,10 +17,11 @@ pub async fn create_order(
     order: &LimitOrder,
     provider: &Provider,
 ) -> (Predicate, Input) {
-    pred.create_predicate();
-    pred.compile_to_bytes();
-    let predicate = Predicate::load_from(PREDICATE).unwrap();
-    let (predicate_bytecode, predicate_root) = get_predicate();
+    let x : (u64,u8) = (313131,232);
+    create_predicate(x.0, x.0, x.1, x.0, x.0, x.0, x.1, x.0, x.0, x.0);
+    let predicate_bytecode = compile_to_bytes("order-predicate.sw", true).into_bytes();
+    let predicate = Predicate::new(predicate_bytecode.clone());
+    let predicate_root = Address::from(*Contract::root_from_code(predicate_bytecode.clone()));
     
     // create the order (fund the predicate)
     let (_tx, _rec) = maker
@@ -44,7 +44,7 @@ pub async fn create_order(
         asset_id: AssetId::from(order.maker_token.0),
         tx_pointer: TxPointer::default(),
         maturity: 0,
-        predicate: predicate_bytecode,
+        predicate: predicate_bytecode.clone(),
         predicate_data: vec![],
     };
     (predicate, predicate_coin_input)
@@ -83,7 +83,7 @@ pub async fn take_order(
         witness_index: 0,
         maturity: 0,
     };
-    let _receipt = env::take_order(
+    let _receipt = inner_take_order(
         order,
         &taker,
         gas_coin_inputs,

@@ -56,6 +56,7 @@ async fn get_contract_instance() -> (MyContract, ContractId) {
 }
 
 #[tokio::test]
+
 async fn can_get_contract_id() {
     let (_instance, _id) = get_contract_instance().await;
 
@@ -64,12 +65,8 @@ async fn can_get_contract_id() {
 mod success {
     use crate::utils::build_take_order::LimitOrder;
 
-    use fuels::{
-        prelude::{Bits256, Token, Tokenizable},
-        test_helpers::DEFAULT_COIN_AMOUNT,
-        tx::AssetId,
-    };
-
+    #[tokio::test]
+    #[test]
     async fn test_make_order_predicate() {
         let mut wallet0 = LocalWallet::new_random(None);
         let mut wallet1 = LocalWallet::new_random(None);
