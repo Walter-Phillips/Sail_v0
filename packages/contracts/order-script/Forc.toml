@@ -1,6 +1,6 @@
 [project]
 authors = ["Walter Phillips"]
-entry = "main.sw"
+entry = "order-script.sw"
 license = "Apache-2.0"
 name = "order-script"
 
