@@ -1,7 +1,10 @@
 use fuels::{
-    prelude::{abigen, TxParameters},
-    tx::{Address, AssetId, Input, Output, Transaction},
+    prelude::{abigen, TxParameters, WalletUnlocked},
+    tx::{Address, AssetId, Input, Output, Transaction, Receipt},
+    contract::script::Script,
+
 };
+
 abigen!(
     LimitOrderStruct,
     "packages/contracts/order-logger/out/debug/order-logger-abi.json"
@@ -58,7 +61,7 @@ async fn build_take_order_tx(
     }
 }
 
-pub async fn take_order(
+pub async fn inner_take_order(
     order: &LimitOrder,
     wallet: &WalletUnlocked,
     gas_coin: Input,

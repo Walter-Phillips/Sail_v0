@@ -2,17 +2,16 @@ use std::fs::File;
 use std::path::Path;
 use std::io::Write;
 
-use anyhow::Result;
-use forc_pkg::BuiltPackage;
+
 use forc_pkg::PackageManifestFile;
 use regex::{Captures , Regex};
-use std::{fmt::Write as OtherWrite, io::Read, path::PathBuf};
+use std::{io::Read, path::PathBuf};
 
 
 pub fn compile_to_bytes(
     file_name: &str,
     capture_output: bool,
-) -> (String) {
+) -> String {
     tracing::info!(" Compiling {}", file_name);
 
     let mut buf_stdout: Option<gag::BufferRedirect> = None;

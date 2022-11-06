@@ -1,14 +1,20 @@
-//using Fuel indexer to log the orders created.
 contract;
-use fuel_indexer_derive::{graphql_schema, handler};
-use fuels_abigen_macro::wasm_abigen;
+use std::logging::log;
+use order::{LimitOrder, OrderSettler};
 
-abi MyContract {
-    fn test_function() -> bool;
+struct MakeOrder {
+    order: LimitOrder,
+}
+struct TakeOrder {
+    order: LimitOrder,
 }
 
-impl MyContract for Contract {
-    fn test_function() -> bool {
-        true
+impl OrderSettler for Contract {
+    fn take(order: LimitOrder) {
+        log(TakeOrder { order })
     }
+    fn make(order: LimitOrder) {
+        log(MakeOrder { order })
+    }
+    
 }
