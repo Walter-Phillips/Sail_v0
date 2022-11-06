@@ -1,3 +1,4 @@
+//test
 use fuels::{prelude::*, tx::ContractId};
 
 // Load abi from json

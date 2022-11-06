@@ -1,3 +1,4 @@
+//set's up the environment - wallet and provider
 use fuels::{
     signers::WalletUnlocked,
     test_helpers::setup_test_client
