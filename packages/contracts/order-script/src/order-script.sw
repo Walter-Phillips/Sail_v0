@@ -1,4 +1,4 @@
-//this script gets called to call the contract for logging.
+//this script will get called to call the contract for logging.
 script;
 // use std::token::transfer_to_address;
 // use std::contract_id::ContractId;
@@ -7,9 +7,6 @@ script;
 fn main() {
     
 }
-   // unnessesary but maybe a UX or DA thing is to post an event will each order 
-   // so that indexers have a picture of the order book. The predicates getting filled on chain 
-   // is not enough. That is equivalent to reversing a hash.
     // let contract_address = 0xec04afe69a0ff8dc93246264540b4c65b046d902b924a26527c3705da76c0a5d;
     // let order_book = abi(OrderSettler, contract_address);
     // let order = LimitOrder {
