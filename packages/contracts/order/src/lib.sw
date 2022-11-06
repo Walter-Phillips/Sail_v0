@@ -1,4 +1,3 @@
-//just a library
 library order;
 
 abi OrderSettler {
@@ -7,11 +6,11 @@ abi OrderSettler {
 }
 
 pub struct LimitOrder {
-    maker_token: b256, // using b256 for convenience, may be a bad idea. 
+    maker_token: b256,  
     taker_token: b256,
     maker_amount: u64,
     taker_amount: u64,
     maker: Address,
-    salt: u64, // arbitrary salt for uniqueness in order hash
+    salt: u64,
 }
 

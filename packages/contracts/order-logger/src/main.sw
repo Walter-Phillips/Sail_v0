@@ -16,5 +16,4 @@ impl OrderSettler for Contract {
     fn make(order: LimitOrder) {
         log(MakeOrder { order })
     }
-    
 }
