@@ -1,4 +1,4 @@
-# Sail_v0
+# Sail
 
 ## Overview
 Sail is a central limit orderbook built on Fuel. This implementation of an order book uses predicates. This adds some complexity to implemnting an orderbook 
