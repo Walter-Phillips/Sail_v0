@@ -5,3 +5,4 @@ license = "Apache-2.0"
 name = "order-logger"
 
 [dependencies]
+order = {path = "../order"}

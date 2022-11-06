@@ -6,6 +6,17 @@ source = 'path+from-root-0EEC2240A883E0FE'
 name = 'order'
 source = 'path+from-root-DB177922C03D9FB0'
 dependencies = ['std']
+<<<<<<< HEAD
+=======
+
+[[package]]
+name = 'order-script'
+source = 'root'
+dependencies = [
+    'order',
+    'std',
+]
+>>>>>>> 22af027197ec550385548500d57054455ddd3098
 
 [[package]]
 name = 'order-script'
