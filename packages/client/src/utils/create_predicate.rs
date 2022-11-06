@@ -22,9 +22,8 @@ pub fn compile_to_bytes(
         buf_stderr = Some(gag::BufferRedirect::stderr().unwrap());
     }
 
-    let manifest_dir = env!("CARGO_MANIFEST_DIR");
     let path = format!("src/{}",file_name);
-    let manifest = PackageManifestFile::from_dir(&PathBuf::from(path));
+
 
 
     let mut output = String::new();
@@ -53,7 +52,7 @@ pub fn compile_to_bytes(
 
     output
 }
-pub fn create_predicate(SPENDING_SCRIPT_HASH:u64, MIN_GAS:u64, OUTPUT_COIN_INDEX:u8, MAKER_ADDRESS:u64, MAKER_AMOUNT:u64, TAKER_AMOUNT:u64, SALT: u8, MAKER_TOKEN:u64, TAKER_TOKEN:u64, MSG_SENDER: u64) {
+pub fn create_predicate(spending_script_hash:u64, min_gas:u64, output_coin_index:u8, maker_address:u64, maker_amount:u64, taker_amount:u64, salt: u8, maker_token:u64, taker_token:u64, msg_sender: u64) {
 let template =
     format!("predicate;
     use std::{{
@@ -173,7 +172,7 @@ let template =
         __gtf::<b256>(index, GTF_OUTPUT_COIN_TO)
     }}
     
-", &SPENDING_SCRIPT_HASH, &MIN_GAS, &OUTPUT_COIN_INDEX, &MAKER_ADDRESS, &MAKER_AMOUNT, &TAKER_AMOUNT, &SALT, &MAKER_TOKEN, &TAKER_TOKEN, &MSG_SENDER);
+", &spending_script_hash, &min_gas, &output_coin_index, &maker_address, &maker_amount, &taker_amount, &salt, &maker_token, &taker_token, &msg_sender);
 
     let path = Path::new("order-predicate.sw");
     let display = path.display();

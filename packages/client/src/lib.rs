@@ -5,12 +5,19 @@ mod utils {
     pub mod order;
     pub mod create_predicate;
 }
-// us
+
+use build_take_order;
+use fuels::{
+    prelude::*, 
+    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
+};
+use rand::Fill;
+use fuel_core_interfaces::model::Coin;
 
 mod success {
 
-    #[test]
-    fn test_make_order_predicate() {
+    #[tokio::test]
+    async fn test_make_order_predicate() {
         let mut wallet0 = LocalWallet::new_random(None);
         let mut wallet1 = LocalWallet::new_random(None);
     
