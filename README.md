@@ -18,7 +18,7 @@ package/
 |    └── Rust client leveraging fuels-rs
 ├── contracts
 |    └── Sway contracts including a logger, script for distributing funds and library for limit orders
-├── indexer
+└── indexer
      └── Way to view logs from contract
 
 ```
