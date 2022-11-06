@@ -6,13 +6,14 @@ mod utils {
     pub mod create_predicate;
 }
 
+use utils::{build_take_order,environment,order,create_predicate};
+use fuels::prelude::*;
 use rand::Fill;
-use fuel_core_interfaces::model::Coin;
 use crate::utils::build_take_order::LimitOrder;
 
 use fuels::{
     prelude::{AssetConfig}, 
-    tx::{Address, AssetId, AssetConfig, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
+    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
     test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
 };
 
@@ -20,6 +21,7 @@ use fuels::{
     async fn test_make_order_predicate() {
         let mut wallet0 = Wallet::new_random(None);
         let mut wallet1 = Wallet::new_random(None);
+        let mut rng = rand::thread_rng();
     
         let asset_base = AssetConfig {
             id: BASE_ASSET_ID,
@@ -46,11 +48,11 @@ use fuels::{
         let assets = vec![asset_base, asset_1, asset_2];
     
         let mut all_coins: Vec<(UtxoId, Coin)> =
-            setup_custom_assets_coins(wallet0.address(), assets);
-        let mut coins2 = setup_custom_assets_coins(wallet1.address(), assets);
+            setup_custom_assets_coins(wallet0.address(), &assets);
+        let mut coins2 = setup_custom_assets_coins(wallet1.address(), ,assets);
         all_coins.append(&mut coins2);
     
-        let (provider, _socket_addr) = setup_test_provider(all_coins.clone(), None).await;
+        let (provider, _socket_addr) = setup_test_provider(all_coins.clone(), ,None).await;
         wallet0.set_provider(provider);
         wallet1.set_provider(provider);
     
@@ -58,8 +60,8 @@ use fuels::{
             maker: wallet0.address().into(),
             maker_amount: wallet0.assets,   // needs to be the amount of asset 1 
             taker_amount: wallet1.assets,   //needs to be the amount of asset 2 
-            maker_token: assets[1],
-            taker_token: assets[2],
+            maker_token: assets[1].id,
+            taker_token: assets[2].id,
             salt: 12,
         };
         
@@ -67,26 +69,26 @@ use fuels::{
             maker: wallet1.address().into(),
             maker_amount: wallet1.assets,   // needs to be the amount of asset 1 
             taker_amount: wallet0.assets,   //needs to be the amount of asset 2 
-            maker_token: assets[2],
-            taker_token: assets[1],
+            maker_token: assets[2].id,
+            taker_token: assets[1].id,
             salt: 12,
         };
 
     
-        let (predicate, predicate_input_coin) = order::create_order(wallet1.address().into(), order1, provider).await;
+        let (predicate, predicate_input_coin) = order::create_order(wallet1.address().into(), &order1, provider).await;
         
         order::verify_balance_of_maker_and_predicate(
             wallet0.address().into(),
             predicate.address(),
-            assets[2],
-            assets[1],
+            assets[2].id,
+            assets[1].coin_amount,
             provider,
         )
         .await;
     
         order::take_order(
             wallet1.address().into(),
-            order1,
+            &order1,
             provider,
             predicate_input_coin,
             wallet1.assets.asset_base,
