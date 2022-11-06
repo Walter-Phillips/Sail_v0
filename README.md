@@ -19,8 +19,8 @@ package/
 ├── contracts
 |    └── Sway contracts including a logger, script for distributing funds and library for limit orders
 ├── indexer
-|    └── Way to view logs from contract
-└── README.md
+     └── Way to view logs from contract
+
 ```
 ## Comments on the code
 There are many improvements that can be made to the current implementation. Firstly, the predicate for each order is being created by formatting a string
