@@ -6,13 +6,13 @@ mod utils {
     pub mod create_predicate;
 }
 
-use build_take_order;
 use fuels::{
     prelude::*, 
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
 };
 use rand::Fill;
 use fuel_core_interfaces::model::Coin;
+use fuels_core::constants::BASE_ASSET_ID;
 
 mod success {
 
@@ -28,7 +28,7 @@ mod success {
         };
     
         let mut asset_id_1 = AssetId::zeroed();
-        asset_id_1.try_fill(&mut rng)?;
+        asset_id_1.try_fill(&mut rng);
         let asset_1 = AssetConfig {
             id: asset_id_1,
             num_coins: 1,
@@ -36,7 +36,7 @@ mod success {
         };
     
         let mut asset_id_2 = AssetId::zeroed();
-        asset_id_2.try_fill(&mut rng)?;
+        asset_id_2.try_fill(&mut rng);
         let asset_2 = AssetConfig {
             id: asset_id_2,
             num_coins: 1,
@@ -54,35 +54,45 @@ mod success {
         wallet0.set_provider(provider);
         wallet1.set_provider(provider);
     
-        let order = build_take_order::LimitOrder {
+        let order0 = build_take_order::LimitOrder {
             maker: wallet0.address().into(),
             maker_amount: wallet0.assets,   // needs to be the amount of asset 1 
             taker_amount: wallet1.assets,   //needs to be the amount of asset 2 
-            maker_token: assets.asset_1,
-            taker_token: assets.asset_2,
-            salt: 69,
+            maker_token: assets[asset_1],
+            taker_token: assets[asset_2],
+            salt: 12,
         };
-    
-        let (predicate, predicate_input_coin) = ord::create_order(&maker, &order, &provider).await;
         
-        ord::verify_balance_of_maker_and_predicate(
-            &maker,
+        let order1 = build_take_order::LimitOrder {
+            maker: wallet1.address().into(),
+            maker_amount: wallet1.assets,   // needs to be the amount of asset 1 
+            taker_amount: wallet0.assets,   //needs to be the amount of asset 2 
+            maker_token: assets[asset_2],
+            taker_token: assets[asset_1],
+            salt: 12,
+        };
+
+    
+        let (predicate, predicate_input_coin) = ord::create_order(wallet1.address().into(), order1, provider).await;
+        
+        order::verify_balance_of_maker_and_predicate(
+            wallet0.address().into(),
             predicate.address(),
-            assets.asset_2,
-            assets.asset_1,
-            &provider,
+            assets[asset_2],
+            assets[asset_1],
+            provider,
         )
         .await;
     
-        ord::take_order(
-            &taker,
-            &order,
-            &provider,
+        order::take_order(
+            wallet1.address().into(),
+            order1,
+            provider,
             predicate_input_coin,
             wallet1.assets.asset_base,
         )
         .await;
-        ord::verify_balance_post_swap(&maker, &taker, predicate.address(), order, &provider).await;
+        order::verify_balance_post_swap(wallet0.address().into(), wallet1.address().into(), predicate.address(), order1, provider).await;
     
     }
     
