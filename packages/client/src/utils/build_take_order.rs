@@ -2,7 +2,7 @@ use fuels::{
     prelude::{abigen, TxParameters, WalletUnlocked},
     tx::{Address, AssetId, Input, Output, Transaction, Receipt},
     contract::script::Script,
-
+    signers::Signer,
 };
 
 abigen!(

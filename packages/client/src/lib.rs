@@ -10,7 +10,7 @@ mod utils {
 mod success {
 
     #[test]
-    async fn test_make_order_predicate() {
+    fn test_make_order_predicate() {
         let mut wallet0 = LocalWallet::new_random(None);
         let mut wallet1 = LocalWallet::new_random(None);
     
