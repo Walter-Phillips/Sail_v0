@@ -8,6 +8,7 @@ use fuels::{
     prelude::{Bech32Address, Provider, TxParameters},
     signers::WalletUnlocked,
     tx::{Address, AssetId, Contract, Input, TxPointer, UtxoId},
+    core::types::Bits256
 };
 
 /// Gets the message to contract predicate
@@ -17,7 +18,12 @@ pub async fn create_order(
     order: &LimitOrder,
     provider: &Provider,
 ) -> (Predicate, Input) {
-    create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570", "1_000_000", "0u8", maker.address(), order.maker_amount, order.taker_amount, order.maker_token, order.taker_token,"salt.to_string()");
+    unsafe{
+        let a = mem::transmute::<Bit256,String>(maker.address());
+        let b = mem::transmute::<Bit256,String>(order.taker_token);
+        let b = mem::transmute::<Bit256,String>(order.maker_token);
+        create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570", "1_000_000", "0u8", maker.address(), order.maker_amount, order.taker_amount, order.maker_token, order.taker_token,"salt.to_string()");
+    }
     let predicate_bytecode = compile_to_bytes("order-predicate.sw", true).into_bytes();
     let predicate = Predicate::new(predicate_bytecode.clone());
     let predicate_root = Address::from(*Contract::root_from_code(predicate_bytecode.clone()));
