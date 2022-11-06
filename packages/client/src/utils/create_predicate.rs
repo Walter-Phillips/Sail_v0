@@ -67,10 +67,9 @@ let template =
     // update this with the script for spending
     const SPENDING_SCRIPT_HASH = {};
     // const MIN_GAS = {};
-    // the constants that define each predicate. I would rather pass these as arguments, but i dont know how 
     const OUTPUT_COIN_INDEX = {};
     fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {{
-        // parameterize this thing
+        // parameterize this 
         let order = LimitOrder {{
             maker: Address::from({}),
             maker_amount: {},
@@ -81,9 +80,9 @@ let template =
         }};
     
         // handle cancellations
-        if(msg_sender == order.maker){
+        if(msg_sender == order.maker){{
             true
-        }
+        }}
         ////////////
         // INPUTS //
         ////////////
@@ -112,7 +111,7 @@ let template =
     }}
     
     ////////////
-    // Inuput //
+    // Input //
     ////////////
     const GTF_INPUT_COIN_AMOUNT = 0x105;
     const GTF_INPUT_COIN_ASSET_ID = 0x106;
@@ -174,7 +173,8 @@ let template =
         __gtf::<b256>(index, GTF_OUTPUT_COIN_TO)
     }}
     
-", &spending_script_hash, &min_gas, &output_coin_index, &maker_address, &maker_amount, &taker_amount, &salt, &maker_token, &taker_token, &msg_sender);
+", &spending_script_hash, &min_gas, &output_coin_index, &maker_address, 
+   &maker_amount, &taker_amount, &salt, &maker_token, &taker_token);
 
     let path = Path::new("order-predicate.sw");
     let display = path.display();

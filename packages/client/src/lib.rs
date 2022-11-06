@@ -6,17 +6,15 @@ mod utils {
     pub mod create_predicate;
 }
 
-use fuels::{
-    prelude::*, 
-    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
-    test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
-};
-
 use rand::Fill;
 use fuel_core_interfaces::model::Coin;
-use fuels_core::constants::BASE_ASSET_ID;
+use crate::utils::build_take_order::LimitOrder;
 
-mod success {
+use fuels::{
+    prelude::{AssetConfig}, 
+    tx::{Address, AssetId, AssetConfig, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
+    test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
+};
 
     #[tokio::test]
     async fn test_make_order_predicate() {
@@ -60,8 +58,8 @@ mod success {
             maker: wallet0.address().into(),
             maker_amount: wallet0.assets,   // needs to be the amount of asset 1 
             taker_amount: wallet1.assets,   //needs to be the amount of asset 2 
-            maker_token: assets[asset_1],
-            taker_token: assets[asset_2],
+            maker_token: assets[1],
+            taker_token: assets[2],
             salt: 12,
         };
         
@@ -69,19 +67,19 @@ mod success {
             maker: wallet1.address().into(),
             maker_amount: wallet1.assets,   // needs to be the amount of asset 1 
             taker_amount: wallet0.assets,   //needs to be the amount of asset 2 
-            maker_token: assets[asset_2],
-            taker_token: assets[asset_1],
+            maker_token: assets[2],
+            taker_token: assets[1],
             salt: 12,
         };
 
     
-        let (predicate, predicate_input_coin) = ord::create_order(wallet1.address().into(), order1, provider).await;
+        let (predicate, predicate_input_coin) = order::create_order(wallet1.address().into(), order1, provider).await;
         
         order::verify_balance_of_maker_and_predicate(
             wallet0.address().into(),
             predicate.address(),
-            assets[asset_2],
-            assets[asset_1],
+            assets[2],
+            assets[1],
             provider,
         )
         .await;
@@ -98,4 +96,4 @@ mod success {
     
     }
     
-}
+
