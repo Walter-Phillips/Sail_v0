@@ -3,16 +3,14 @@ schema {
 }
 
 type QueryRoot {
-    count: CountEntity
+    order: MakeOrder
+    order: TakeOrder
 }
 
-type CountEntity {
-    id: ID!
-    count: UInt8!
+type MakeOrder {
+    order: LimitOrder
 }
 
-type AdjustedCountEntity {
-    id: ID!
-    count: CountEntity!
-    adjusted_count: UInt8!
+type TakeOrder {
+    order: LimitOrder
 }
