@@ -4,9 +4,17 @@ source = 'path+from-root-2EB6EDF3C716E8D9'
 dependencies = []
 
 [[package]]
+name = 'order'
+source = 'path+from-root-DB177922C03D9FB0'
+dependencies = ['std']
+
+[[package]]
 name = 'order-script'
 source = 'root'
-dependencies = ['std']
+dependencies = [
+    'order',
+    'std',
+]
 
 [[package]]
 name = 'std'
