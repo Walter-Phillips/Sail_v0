@@ -1,0 +1,9 @@
+namespace: SailV0
+identifier: your_index_name
+abi: /full/path/to/your/smart-contract-abi.json
+start_block: 1
+# your smart contract ID
+contract: 0x39150017c9e38e5e280432d546fae345d6ce6d8fe4710162c2e3a95a6faff051 
+graphql_schema: ./indexer/schema.graphql
+module:
+  wasm: /full/path/to/my_index.wasm

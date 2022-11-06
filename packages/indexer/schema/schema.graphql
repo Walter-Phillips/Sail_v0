@@ -1,0 +1,18 @@
+schema {
+    query: QueryRoot
+}
+
+type QueryRoot {
+    count: CountEntity
+}
+
+type CountEntity {
+    id: ID!
+    count: UInt8!
+}
+
+type AdjustedCountEntity {
+    id: ID!
+    count: CountEntity!
+    adjusted_count: UInt8!
+}
