@@ -1,25 +1,23 @@
-//test
-mod utils {
-    pub mod build_take_order;
-    pub mod environment;
-    pub mod order;
-    pub mod create_predicate;
-}
-
-use utils::{build_take_order,environment,order,create_predicate};
-use fuels::prelude::*;
-use rand::Fill;
 use std::mem::size_of;
-use crate::utils::build_take_order::LimitOrder;
-use fuel_core_interfaces::common::fuel_crypto::SecretKey;
 
+use super::builder::build_take_order_tx;
+use super::builder::LimitOrder;
+use fuel_core_interfaces::common::fuel_crypto::SecretKey;
+use fuel_core_interfaces::model::Coin;
 use fuels::{
-    prelude::{AssetConfig}, 
-    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
-    test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
+    contract::script::Script,
+    prelude::{Provider, TxParameters},
+    signers::{Signer, WalletUnlocked},
+    test_helpers::{setup_single_asset_coins, setup_test_client, Config},
+    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
 };
 
-
+// abigen!(
+//     OrderSettler,
+//     "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
+// );
+// pub const ORDER_BOOK_CONTRACT_BINARY: &str =
+//     "packages/contracts/order-settle-contract/out/debug/order-settle-contract.bin";
 pub async fn setup_environment(
     coin: (Word, AssetId),
 ) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
@@ -64,38 +62,34 @@ pub async fn setup_environment(
         .collect();
     (wallet, wallet2, coin_inputs, provider)
 }
-use fuel_core_interfaces::model::Coin;
 
-    #[tokio::test]
-    async fn test_limit_order_predicate() {
-        let coin = (DEFAULT_COIN_AMOUNT, AssetId::default());
-        let (maker, taker, coin_inputs, provider) = setup_environment(coin).await;
-        let order = LimitOrder {
-            maker: maker.address().into(),
-            maker_amount: coin.0,
-            taker_amount: coin.0 / 2,
-            maker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
-            taker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
-            salt: 42,
-        };
-        let (predicate, predicate_input_coin) = order::create_order(&maker, &order, &provider).await;
-        order::verify_balance_of_maker_and_predicate(
-            &maker,
-            predicate.address(),
-            coin.1,
-            coin.0,
-            &provider,
-        )
-        .await;
-        order::take_order(
-            &taker,
-            &order,
-            &provider,
-            predicate_input_coin,
-            coin_inputs[0].clone(),
-        )
-        .await;
-        order::verify_balance_post_swap(&maker, &taker, predicate.address(), order, &provider).await;
-    }
-    
+pub async fn take_order(
+    order: &LimitOrder,
+    wallet: &WalletUnlocked,
+    gas_coin: Input,
+    predicate_coins_input: Input,
+    optional_inputs: &[Input],
+    optional_outputs: &[Output],
+) -> Vec<Receipt> {
+    let mut tx = build_take_order_tx(
+        order,
+        wallet.address().into(),
+        gas_coin,
+        predicate_coins_input,
+        optional_inputs,
+        optional_outputs,
+        TxParameters::default(),
+    )
+    .await;
 
+    sign_and_call_tx(wallet, &mut tx).await
+}
+
+pub async fn sign_and_call_tx(wallet: &WalletUnlocked, tx: &mut Transaction) -> Vec<Receipt> {
+    let provider = wallet.get_provider().unwrap();
+    wallet.sign_transaction(tx).await.unwrap();
+    let script = Script::new(tx.clone());
+    script.call(provider).await.unwrap()
+}
+
+// Setup Wallet and Provider 
