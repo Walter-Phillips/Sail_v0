@@ -974,6 +974,7 @@ dependencies = [
  "fuel-core 0.14.0",
  "fuel-core-interfaces 0.10.1",
  "fuels",
+ "fuels-signers",
  "gag",
  "prelude",
  "rand 0.8.5",

@@ -5,13 +5,12 @@
 */
 use std::{
     fs::File,
-    process::Command,
     path::Path,
     io::{Write, Read}
 };
 use regex::{Captures , Regex};
 use fuels::{
-    tx::Address,
+    tx::{Address, Contract},
     contract::predicate::Predicate
 };
 
@@ -21,7 +20,7 @@ use fuels::{
 fn compile_to_bytes(
     file_name: &str,
     capture_output: bool,
-) -> String {
+) -> Vec<u8> {
     tracing::info!(" Compiling {}", file_name);
 
     let mut buf_stdout: Option<gag::BufferRedirect> = None;
@@ -51,9 +50,9 @@ fn compile_to_bytes(
                 .to_string();
         }
     }
-    output
+    output.into_bytes()
 }
-fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:&Bech32Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) {
+fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) {
 let template =
     format!("predicate;
 
@@ -186,16 +185,6 @@ let template =
    }
 }
 
-fn execute_command(command: &str) -> String {
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg(command)
-        .output()
-        .expect("failed to execute process");
-    let output_string = String::from_utf8_lossy(&output.stdout);
-    println!("Something happening");
-    output_string.to_string()
-}
 
 /*
     Main functionality
@@ -205,17 +194,19 @@ fn execute_command(command: &str) -> String {
     Step 3 - Creating an instance of a predicate that is returned
 */
 
-pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) -> Predicate {
+pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) -> (Predicate, Vec<u8>, Address) {
     // Step 1
     let _predicate_file = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
 
     // Step 2
-    let output = compile_to_bytes("src/utils/tmp/tmp_predicate.sw", true);
+    let predicate_bytecode = compile_to_bytes("src/utils/tmp/tmp_predicate.sw", true);
 
     // Step 3
-    let predicate = Predicate::new(output.into_bytes());
+    let predicate = Predicate::new(predicate_bytecode);
 
-    predicate
+    let predicate_root = Address::from(*Contract::root_from_code(&predicate_bytecode));
+
+    (predicate, predicate_bytecode, predicate_root)
 }
 
 

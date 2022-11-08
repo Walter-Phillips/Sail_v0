@@ -1,21 +1,21 @@
-// use fuels::{
-//     prelude::{abigen, TxParameters, WalletUnlocked},
-//     tx::{Address, AssetId, Input, Output, Transaction, Receipt},
-//     contract::script::Script,
-//     signers::Signer,
-// };
+use fuels::{
+    prelude::{abigen, TxParameters, WalletUnlocked},
+    tx::{Address, AssetId, Input, Output, Transaction, Receipt},
+    contract::script::Script,
+    signers::Signer,
+};
 
-// abigen!(
-//     LimitOrderStruct,
-//     "packages/contracts/order-logger/out/debug/order-logger-abi.json"
-// );
+abigen!(
+    LimitOrderStruct,
+    "packages/contracts/order-logger/out/debug/order-logger-abi.json"
+);
 
-// const MIN_GAS: u64 = 100_000;
-// const TAKE_ORDER_SCRIPT_BINARY: &str = "/packages/contracts/order-script/out/debug/order-script.bin";
-// pub async fn get_take_order_script() -> Vec<u8> {
-//     let script_bytecode = std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap();
-//     script_bytecode
-// }
+const MIN_GAS: u64 = 100_000;
+const TAKE_ORDER_SCRIPT_BINARY: &str = "/packages/contracts/order-script/out/debug/order-script.bin";
+pub async fn get_take_order_script() -> Vec<u8> {
+    let script_bytecode = std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap();
+    script_bytecode
+}
 
 // async fn build_take_order_tx(
 //     order: &LimitOrder,
