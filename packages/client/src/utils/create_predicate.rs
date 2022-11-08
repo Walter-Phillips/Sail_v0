@@ -16,7 +16,7 @@ use fuels::tx::Address;
 
 
 
-pub fn compile_to_bytes(
+fn compile_to_bytes(
     file_name: &str,
     capture_output: bool,
 ) -> String {
@@ -30,7 +30,6 @@ pub fn compile_to_bytes(
         buf_stderr = Some(gag::BufferRedirect::stderr().unwrap());
     }
 
-    let path = format!("src/{}",file_name);
     let mut output = String::new();
     if capture_output {
         let mut buf_stdout = buf_stdout.unwrap();
@@ -206,7 +205,7 @@ fn execute_command(command: &str) -> String {
 
 pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) -> Predicate {
     // Step 1
-    let predicate_string = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
+    let _predicate_file = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
 
     // Step 2
     let output = compile_to_bytes("src/utils/tmp/tmp_predicate.sw", true);

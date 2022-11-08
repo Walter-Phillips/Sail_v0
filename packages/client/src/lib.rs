@@ -6,7 +6,7 @@ mod utils {
     pub mod create_predicate;
 }
 
-use utils::{create_predicate};
+use utils::create_predicate;
 use fuels::prelude::*;
 use fuels::{
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
