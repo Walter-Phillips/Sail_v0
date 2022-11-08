@@ -61,7 +61,7 @@ use fuel_core_interfaces::common::fuel_crypto::SecretKey;
             .for_each(|wallet| wallet.set_provider(provider.clone()));
 
 
-        let predicate = create_predicate::create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570".to_string(),"1_000_000".to_string(),"0u8".to_string(),address0,"12312323".to_string(),"23131231".to_string(),address0,address2,"123123".to_string());
+        let predicate = create_predicate::create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570".to_string(),"1_000_000".to_string(),"0u8".to_string(),address0,312332,123123,address0,address2,"123123".to_string());
 
         let predicate_code = predicate.code();
         let predicate_address  = predicate.address();

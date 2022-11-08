@@ -204,7 +204,7 @@ fn execute_command(command: &str) -> String {
     Step 3 - Creating an instance of a predicate that is returned
 */
 
-pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:String, taker_amount:String,  maker_token:Address, taker_token:Address, salt: String) -> Predicate {
+pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) -> Predicate {
     // Step 1
     let predicate_string = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
 
