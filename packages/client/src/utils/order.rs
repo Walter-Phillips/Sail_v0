@@ -18,12 +18,19 @@ pub async fn create_order(
     order: &LimitOrder,
     provider: &Provider,
 ) -> (Predicate, Input) {
-    unsafe{
-        let a = mem::transmute::<Bit256,String>(maker.address());
-        let b = mem::transmute::<Bit256,String>(order.taker_token);
-        let b = mem::transmute::<Bit256,String>(order.maker_token);
-        create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570", "1_000_000", "0u8", maker.address(), order.maker_amount, order.taker_amount, order.maker_token, order.taker_token,"salt.to_string()");
-    }
+
+    create_predicate(
+        "0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570".to_string(),
+        "1_000_000".to_string(),
+        "0u8".to_string(),
+        maker.address(),
+        order.maker_amount,
+        order.taker_amount, 
+        order.maker_token, 
+        order_taker.token,
+        "123123".to_string()
+    );
+
     let predicate_bytecode = compile_to_bytes("order-predicate.sw", true).into_bytes();
     let predicate = Predicate::new(predicate_bytecode.clone());
     let predicate_root = Address::from(*Contract::root_from_code(predicate_bytecode.clone()));
@@ -55,68 +62,4 @@ pub async fn create_order(
     (predicate, predicate_coin_input)
 }
 
-pub async fn verify_balance_of_maker_and_predicate(
-    maker: &WalletUnlocked,
-    predicate: &Bech32Address,
-    asset: AssetId,
-    amount: u64,
-    provider: &Provider,
-) {
-    let balance = maker.get_asset_balance(&asset).await.unwrap();
-    let predicate_balance = provider.get_asset_balance(predicate, asset).await.unwrap();
-    assert!(balance == 0);
-    println!("{}", balance);
-    assert!(predicate_balance == amount);
-    println!("{}",predicate_balance);
-}
 
-pub async fn take_order(
-    taker: &WalletUnlocked,
-    order: &LimitOrder,
-    provider: &Provider,
-    predicate_coin_input: Input,
-    gas_coin_inputs: Input,
-) {
-    let input_coins = &provider
-        .get_coins(&taker.address(), AssetId::default())
-        .await
-        .unwrap()[0];
-
-    let taker_coin_input = Input::CoinSigned {
-        utxo_id: UtxoId::from(input_coins.utxo_id.clone()),
-        owner: taker.address().into(),
-        amount: input_coins.amount.clone().into(),
-        asset_id: input_coins.asset_id.clone().into(),
-        tx_pointer: TxPointer::default(),
-        witness_index: 0,
-        maturity: 0,
-    };
-    let _receipt = inner_take_order(
-        order,
-        &taker,
-        gas_coin_inputs,
-        predicate_coin_input,
-        &vec![taker_coin_input],
-        &vec![],
-    )
-    .await;
-}
-pub async fn verify_balance_post_swap(
-    maker: &WalletUnlocked,
-    taker: &WalletUnlocked,
-    predicate_address: &Bech32Address,
-    order: LimitOrder,
-    provider: &Provider,
-) {
-    let maker_token = AssetId::from(order.maker_token.0);
-    let taker_token = AssetId::from(order.taker_token.0);
-    let balance_maker = maker.get_asset_balance(&taker_token).await.unwrap();
-    let balance_taker = taker.get_asset_balance(&maker_token).await.unwrap();
-    let predicate_balance = provider
-        .get_asset_balance(predicate_address, maker_token)
-        .await
-        .unwrap();
-    assert!(balance_maker == order.taker_amount);
-    assert!(balance_taker == order.maker_amount);
-    assert!(predicate_balance == 0);
-}

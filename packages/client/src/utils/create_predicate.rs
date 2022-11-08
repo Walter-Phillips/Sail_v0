@@ -1,12 +1,19 @@
-use std::fs::File;
-use std::path::Path;
-use std::io::Write;
-
-
-use forc_pkg::PackageManifestFile;
+/*
+    Creates a predicate dynamically
+    Takes in a set of arguments and then creates a sway file for a predicate based on passed args
+    Compiles file to a binary and then returns an instance of a predicate from the generated binary
+*/
+use std::{
+    fs::File,
+    process::Command,
+    path::Path,
+    io::{Write, Read}
+};
 use regex::{Captures , Regex};
-use std::{io::Read, path::PathBuf};
-use fuels::core::types::Bits256;
+use fuels_contract::predicate::Predicate;
+use fuels::tx::Address;
+
+
 
 
 pub fn compile_to_bytes(
@@ -33,12 +40,8 @@ pub fn compile_to_bytes(
         drop(buf_stdout);
         drop(buf_stderr);
 
-        // Capture the result of the compilation (i.e., any errors Forc produces) and append to
-        // the stdout from the compiler.
 
         if cfg!(windows) {
-            // In windows output error and warning path files start with \\?\
-            // We replace \ by / so tests can check unix paths only
             let regex = Regex::new(r"\\\\?\\(.*)").unwrap();
             output = regex
                 .replace_all(output.as_str(), |caps: &Captures| {
@@ -49,8 +52,7 @@ pub fn compile_to_bytes(
     }
     output
 }
-
-pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Bits256, maker_amount:String, taker_amount:String,  maker_token:Bits256, taker_token:Bits256, salt: String) {
+fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) {
 let template =
     format!("predicate;
 
@@ -166,21 +168,54 @@ let template =
         __gtf::<b256>(index, GTF_OUTPUT_COIN_TO)
     }}"
     , &spending_script_hash, &min_gas, &output_coin_index, &maker_address, 
-   &maker_amount, &taker_amount, &salt, &maker_token, &taker_token);
+   &maker_amount, &taker_amount, &maker_token, &taker_token, &salt);
 
-    let path = Path::new("order-predicate.sw");
-    let display = path.display();
+   let path = Path::new("src/utils/tmp/tmp_predicate.sw");
+   let display = path.display();
 
-    // Open a file in write-only mode, returns `io::Result<File>`
-    let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why),
-        Ok(file) => file,
-    };
+   let mut file = match File::create(&path) {
+       Err(why) => panic!("couldn't create {}: {}", display, why),
+       Ok(file) => file,
+   };
 
-    // Write the template params to `file`, returns `io::Result<()>`
-    match file.write_all(template.as_bytes()) {
-        Err(why) => panic!("couldn't write to {}: {}", display, why),
-        Ok(_) => println!("successfully wrote to {}", display),
-    }
+   // Write the template params to `file`, returns `io::Result<()>`
+   match file.write_all(template.as_bytes()) {
+       Err(why) => panic!("couldn't write to {}: {}", display, why),
+       Ok(_) => println!("successfully wrote to {}", display),
+   }
 }
+
+fn execute_command(command: &str) -> String {
+    let output = Command::new("sh")
+        .arg("-c")
+        .arg(command)
+        .output()
+        .expect("failed to execute process");
+    let output_string = String::from_utf8_lossy(&output.stdout);
+    println!("Something happening");
+    output_string.to_string()
+}
+
+/*
+    Main functionality
+    Step 1 - Taking in the arguments and placing them in the template predicate string and writing it to the
+             tmp_predicate.sw file
+    Step 2 - Compiling to bytes
+    Step 3 - Creating an instance of a predicate that is returned
+*/
+
+pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:String, taker_amount:String,  maker_token:Address, taker_token:Address, salt: String) -> Predicate {
+    // Step 1
+    let predicate_string = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
+
+    // Step 2
+    let output = compile_to_bytes("src/utils/tmp/tmp_predicate.sw", true);
+
+    // Step 3
+    let predicate = Predicate::new(output.into_bytes());
+
+    predicate
+}
+
+
 

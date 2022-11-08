@@ -6,96 +6,81 @@ mod utils {
     pub mod create_predicate;
 }
 
-use utils::{build_take_order,environment,order,create_predicate};
+use utils::{create_predicate};
 use fuels::prelude::*;
-use rand::Fill;
-use std::mem::size_of;
-use crate::utils::build_take_order::LimitOrder;
-use fuel_core_interfaces::common::fuel_crypto::SecretKey;
-
 use fuels::{
-    prelude::{AssetConfig}, 
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word, ContractId},
     test_helpers::{setup_custom_assets_coins, setup_test_provider, Config},
 };
-
-
-pub async fn setup_environment(
-    coin: (Word, AssetId),
-) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
-    const SIZE_SECRET_KEY: usize = size_of::<SecretKey>();
-    const PADDING_BYTES: usize = SIZE_SECRET_KEY - size_of::<u64>();
-    let mut secret_key: [u8; SIZE_SECRET_KEY] = [0; SIZE_SECRET_KEY];
-    secret_key[PADDING_BYTES..].copy_from_slice(&(8320147306839812359u64).to_be_bytes());
-    let mut wallet = WalletUnlocked::new_from_private_key(
-        SecretKey::try_from(secret_key.as_slice())
-            .expect("This should never happen as we provide a [u8; SIZE_SECRET_KEY] array"),
-        None,
-    );
-    let mut wallet2 = WalletUnlocked::new_random(None);
-    let mut all_coins: Vec<(UtxoId, Coin)> =
-        setup_single_asset_coins(wallet.address(), coin.1, 1, coin.0);
-    let mut coins2 = setup_single_asset_coins(wallet2.address(), coin.1, 1, coin.0 / 2);
-    all_coins.append(&mut coins2);
-
-    // Create the client and provider
-    let mut provider_config = Config::local_node();
-    provider_config.predicates = true;
-    provider_config.utxo_validation = true;
-    let (client, _) =
-        setup_test_client(all_coins.clone(), Vec::new(), Some(provider_config), None).await;
-    let provider = Provider::new(client);
-
-    // Add provider to wallet
-    wallet.set_provider(provider.clone());
-    wallet2.set_provider(provider.clone());
-
-    let coin_inputs: Vec<Input> = all_coins
-        .into_iter()
-        .map(|coin| Input::CoinSigned {
-            utxo_id: UtxoId::from(coin.0.clone()),
-            owner: Address::from(coin.1.owner.clone()),
-            amount: coin.1.amount.clone().into(),
-            asset_id: AssetId::from(coin.1.asset_id.clone()),
-            tx_pointer: TxPointer::default(),
-            witness_index: 0,
-            maturity: 0,
-        })
-        .collect();
-    (wallet, wallet2, coin_inputs, provider)
-}
-use fuel_core_interfaces::model::Coin;
+use fuel_core_interfaces::common::fuel_crypto::SecretKey;
 
     #[tokio::test]
-    async fn test_limit_order_predicate() {
-        let coin = (DEFAULT_COIN_AMOUNT, AssetId::default());
-        let (maker, taker, coin_inputs, provider) = setup_environment(coin).await;
-        let order = LimitOrder {
-            maker: maker.address().into(),
-            maker_amount: coin.0,
-            taker_amount: coin.0 / 2,
-            maker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
-            taker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
-            salt: 42,
-        };
-        let (predicate, predicate_input_coin) = order::create_order(&maker, &order, &provider).await;
-        order::verify_balance_of_maker_and_predicate(
-            &maker,
-            predicate.address(),
-            coin.1,
-            coin.0,
-            &provider,
+    async fn test_predicate_creation() {
+    let address0 = Address::zeroed();
+    let address1 = Address::zeroed();
+    let address2 = Address::zeroed();
+        let secret_key1: SecretKey =
+        "0x862512a2363db2b3a375c0d4bbbd27172180d89f23f2e259bac850ab02619301"
+            .parse()
+            .unwrap();
+
+    let secret_key2: SecretKey =
+        "0x37fa81c84ccd547c30c176b118d5cb892bdb113e8e80141f266519422ef9eefd"
+            .parse()
+            .unwrap();
+
+    let secret_key3: SecretKey =
+        "0x976e5c3fa620092c718d852ca703b6da9e3075b9f2ecb8ed42d9f746bf26aafb"
+            .parse()
+            .unwrap();
+
+    let mut wallet = WalletUnlocked::new_from_private_key(secret_key1, None);
+    let mut wallet2 = WalletUnlocked::new_from_private_key(secret_key2, None);
+    let mut wallet3 = WalletUnlocked::new_from_private_key(secret_key3, None);
+    let receiver = WalletUnlocked::new_random(None);
+
+        let all_coins = [&wallet, &wallet2, &wallet3]
+            .iter()
+            .flat_map(|wallet| {
+                setup_single_asset_coins(wallet.address(), AssetId::default(), 10, 1_000_000)
+            })
+            .collect::<Vec<_>>();
+
+        let (provider, _) = setup_test_provider(
+            all_coins,
+            vec![],
+            Some(Config {
+                utxo_validation: true,
+                ..Config::local_node()
+            })
         )
         .await;
-        order::take_order(
-            &taker,
-            &order,
-            &provider,
-            predicate_input_coin,
-            coin_inputs[0].clone(),
-        )
-        .await;
-        order::verify_balance_post_swap(&maker, &taker, predicate.address(), order, &provider).await;
+
+        [&mut wallet, &mut wallet2, &mut wallet3]
+            .iter_mut()
+            .for_each(|wallet| wallet.set_provider(provider.clone()));
+
+
+        let predicate = create_predicate::create_predicate("0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570".to_string(),"1_000_000".to_string(),"0u8".to_string(),address0,"12312323".to_string(),"23131231".to_string(),address0,address2,"123123".to_string());
+
+        let predicate_code = predicate.code();
+        let predicate_address  = predicate.address();
+        let amount_to_predicate = 1000;
+        let asset_id = AssetId::default();
+
+        wallet
+            .transfer(
+                predicate_address,
+                amount_to_predicate,
+                asset_id,
+                TxParameters::default(),
+            )
+            .await;
+
+        let predicate_balance = provider
+            .get_asset_balance(predicate.address(), asset_id)
+            .await;
+        assert_eq!(predicate_balance.unwrap(), amount_to_predicate);
     }
     
 
