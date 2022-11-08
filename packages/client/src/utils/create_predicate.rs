@@ -10,8 +10,10 @@ use std::{
     io::{Write, Read}
 };
 use regex::{Captures , Regex};
-use fuels_contract::predicate::Predicate;
-use fuels::tx::Address;
+use fuels::{
+    tx::Address,
+    contract::predicate::Predicate
+};
 
 
 
@@ -51,7 +53,7 @@ fn compile_to_bytes(
     }
     output
 }
-fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) {
+fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:&Bech32Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) {
 let template =
     format!("predicate;
 

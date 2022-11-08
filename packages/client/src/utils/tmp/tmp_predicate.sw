@@ -17,8 +17,8 @@ predicate;
         // parameterize this 
         let order = LimitOrder {
             maker: Address::from(0000000000000000000000000000000000000000000000000000000000000000),
-            maker_amount: 12312323,
-            taker_amount: 23131231,
+            maker_amount: 312332,
+            taker_amount: 123123,
             maker_token: 0000000000000000000000000000000000000000000000000000000000000000,
             taker_token: 0000000000000000000000000000000000000000000000000000000000000000,
             salt: 123123,
