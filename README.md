@@ -18,14 +18,14 @@ package/
 
 ```
 ## Comments on the code
-There are improvements that can be made to the current implementation. Firstly, the predicate for each order is being created by formatting a string
+In it's current state the generation isn't working because of type incompatibility. With some slight refactoring this should not be an issue.
+
+There are othe improvements that can be made to the current implementation. Firstly, the predicate for each order is being created by formatting a string
 and using that string to create a sway file and compiling that file. This method ,even though it works, is far from ideal. This can easily be remidied when you
 can pass arguments to a predicate from the SDK. Secondly, we are using tests to check for the correct behaviour. We will likely make a testnet deployment
 with instructions for how to play around with the orderbook.
 
 
-## Road ahead
-There are a multitude of different things that could be built into and around this base implementation.
 
 ## Appreciation
 We want to give a huge shoutout to everyone that helped us the last two days. We want to call out Ryan Sproule in particular he gave us some reference code
