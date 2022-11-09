@@ -13,7 +13,9 @@ predicate;
     const SPENDING_SCRIPT_HASH = 0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570;
     const MIN_GAS = 1_000_000;
     const OUTPUT_COIN_INDEX = 0u8;
-    fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
+    fn main() -> bool {
+        
+
         // parameterize this 
         let order = LimitOrder {
             maker: Address::from(0000000000000000000000000000000000000000000000000000000000000000),
@@ -23,6 +25,13 @@ predicate;
             taker_token: 0000000000000000000000000000000000000000000000000000000000000000,
             salt: 123123,
         };
+
+        let sender: Result<Identity, AuthError> = msg_sender();
+        if(sender.unwrap() == order.maker) {
+            true
+        }
+
+    
     
         ////////////
         // INPUTS //

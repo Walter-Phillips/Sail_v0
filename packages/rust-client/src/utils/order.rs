@@ -5,10 +5,9 @@ use crate::utils::create_predicate::*;
 
 use fuels::{
     contract::predicate::Predicate,
-    prelude::{Bech32Address, Provider, TxParameters},
+    prelude::{Provider, TxParameters},
     signers::WalletUnlocked,
-    tx::{Address, AssetId, Contract, Input, TxPointer, UtxoId},
-    core::types::Bits256
+    tx::{AssetId, Input, TxPointer, UtxoId},
 };
 
 /// Gets the message to contract predicate
@@ -18,7 +17,6 @@ pub async fn create_order(
     order: &LimitOrder,
     provider: &Provider,
 ) -> (Predicate, Input) {
-
     let (predicate, predicate_bytecode, predicate_root) = create_predicate(
         "0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570".to_string(),
         "1_000_000".to_string(),
@@ -37,7 +35,7 @@ pub async fn create_order(
         .transfer(
             predicate.address(),
             order.maker_amount,
-            AssetId::from(order.maker_token.0),
+            AssetId::from(order.maker_token),
             TxParameters::default(),
         )
         .await
@@ -59,4 +57,18 @@ pub async fn create_order(
     (predicate, predicate_coin_input)
 }
 
-
+pub async fn cancel_order(    
+    maker: &WalletUnlocked,
+    predicate: Predicate,
+    provider: &Provider
+){
+    maker
+    .transfer(
+            predicate.address(),
+            0,
+            AssetId::from(order.maker_token),
+            TxParameters::default(),
+        )
+        .await
+        .unwrap();
+}

@@ -69,7 +69,7 @@ let template =
     const SPENDING_SCRIPT_HASH = {};
     const MIN_GAS = {};
     const OUTPUT_COIN_INDEX = {};
-    fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {{
+    fn main() -> bool {{
         // parameterize this 
         let order = LimitOrder {{
             maker: Address::from({}),
@@ -79,6 +79,11 @@ let template =
             taker_token: {},
             salt: {},
         }};
+
+        let sender: Result<Identity, AuthError> = msg_sender();
+        if(sender.unwrap() == order.maker) {{
+            true
+        }}
     
         ////////////
         // INPUTS //
