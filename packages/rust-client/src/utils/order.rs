@@ -7,7 +7,7 @@ use fuels::{
     contract::predicate::Predicate,
     prelude::{Provider, TxParameters},
     signers::WalletUnlocked,
-    tx::{AssetId, Input, TxPointer, UtxoId},
+    tx::{AssetId, Address},
 };
 
 /// Gets the message to contract predicate
@@ -15,8 +15,7 @@ use fuels::{
 pub async fn create_order(
     maker: &WalletUnlocked,
     order: &LimitOrder,
-    provider: &Provider,
-) -> (Predicate, Input) {
+) -> (Predicate, Address, Vec<u8>) {
     let (predicate, predicate_bytecode, predicate_root) = create_predicate(
         "0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570".to_string(),
         "1_000_000".to_string(),
@@ -38,19 +37,5 @@ pub async fn create_order(
         )
         .await
         .unwrap();
-    let predicate_coin = &provider
-        .get_coins(&predicate_root.into(), AssetId::default())
-        .await
-        .unwrap()[0];
-    let predicate_coin_input = Input::CoinPredicate {
-        utxo_id: UtxoId::from(predicate_coin.utxo_id.clone()),
-        owner: predicate_root,
-        amount: order.maker_amount,
-        asset_id: AssetId::from(order.maker_token.0),
-        tx_pointer: TxPointer::default(),
-        maturity: 0,
-        predicate: predicate_bytecode.clone(),
-        predicate_data: vec![],
-    };
-    (predicate, predicate_coin_input)
+    (predicate, predicate_root, predicate_bytecode)
 }
