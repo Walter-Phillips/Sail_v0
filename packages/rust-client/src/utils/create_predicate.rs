@@ -10,6 +10,7 @@ use std::{
 };
 use regex::{Captures , Regex};
 use fuels::{
+    prelude::{Bits256, Bech32Address},
     tx::{Address, Contract},
     contract::predicate::Predicate
 };
@@ -52,7 +53,7 @@ fn compile_to_bytes(
     }
     output.into_bytes()
 }
-fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) {
+fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:&Bech32Address, maker_amount:u64, taker_amount:u64,  maker_token:Bits256, taker_token:Bits256, salt: String) {
 let template =
     format!("predicate;
 
@@ -75,8 +76,8 @@ let template =
             maker: Address::from({}),
             maker_amount: {},
             taker_amount: {},
-            maker_token: {},
-            taker_token: {},
+            maker_token: {:?},
+            taker_token: {:?},
             salt: {},
         }};
 
@@ -199,7 +200,7 @@ let template =
     Step 3 - Creating an instance of a predicate that is returned
 */
 
-pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:Address, maker_amount:u64, taker_amount:u64,  maker_token:Address, taker_token:Address, salt: String) -> (Predicate, Vec<u8>, Address) {
+pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:&Bech32Address, maker_amount:u64, taker_amount:u64,  maker_token:Bits256, taker_token:Bits256, salt: String) -> (Predicate, Vec<u8>, Address) {
     // Step 1
     let _predicate_file = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
 
@@ -207,9 +208,9 @@ pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin
     let predicate_bytecode = compile_to_bytes("src/utils/tmp/tmp_predicate.sw", true);
 
     // Step 3
-    let predicate = Predicate::new(predicate_bytecode);
+    let predicate = Predicate::new(predicate_bytecode.clone());
 
-    let predicate_root = Address::from(*Contract::root_from_code(&predicate_bytecode));
+    let predicate_root = Address::from(*Contract::root_from_code(predicate_bytecode.clone()));
 
     (predicate, predicate_bytecode, predicate_root)
 }

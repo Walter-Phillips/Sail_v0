@@ -1,5 +1,5 @@
 use fuels::prelude::*;
-
+use fuels::prelude::Bech32Address;
 use fuels::{
     tx::{Address, AssetId},
     test_helpers::{setup_test_provider, Config},
@@ -10,10 +10,11 @@ use fuels_signers::provider::Provider;
 
 use fuel_core_interfaces::common::fuel_crypto::SecretKey;
 
-    pub async fn setup() -> (Provider , WalletUnlocked, Address, WalletUnlocked, Address, WalletUnlocked, Address) {
+    pub async fn setup() -> (Provider , WalletUnlocked, Address, WalletUnlocked, Address, WalletUnlocked, Address) {            
         let address1 = Address::zeroed();
         let address2 = Address::zeroed();
         let address3 = Address::zeroed();
+
             let secret_key1: SecretKey =
             "0x862512a2363db2b3a375c0d4bbbd27172180d89f23f2e259bac850ab02619301"
                 .parse()

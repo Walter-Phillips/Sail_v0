@@ -14,15 +14,13 @@ predicate;
     const MIN_GAS = 1_000_000;
     const OUTPUT_COIN_INDEX = 0u8;
     fn main() -> bool {
-        
-
         // parameterize this 
         let order = LimitOrder {
-            maker: Address::from(0000000000000000000000000000000000000000000000000000000000000000),
-            maker_amount: 312332,
-            taker_amount: 123123,
-            maker_token: 0000000000000000000000000000000000000000000000000000000000000000,
-            taker_token: 0000000000000000000000000000000000000000000000000000000000000000,
+            maker: Address::from(fuel1uy84y6ceykfhjwm6z4v68y2yt746s2sav60ravku69lecysmyjcss0yrdx),
+            maker_amount: 10,
+            taker_amount: 10,
+            maker_token: Bits256([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            taker_token: Bits256([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
             salt: 123123,
         };
 
@@ -30,8 +28,6 @@ predicate;
         if(sender.unwrap() == order.maker) {
             true
         }
-
-    
     
         ////////////
         // INPUTS //

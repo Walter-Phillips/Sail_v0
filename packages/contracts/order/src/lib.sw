@@ -7,8 +7,8 @@ abi OrderSettler {
 }
 
 pub struct LimitOrder {
-    maker_token: ContractId,  
-    taker_token: ContractId,
+    maker_token: b256,  
+    taker_token: b256,
     maker_amount: u64,
     taker_amount: u64,
     maker: Address,

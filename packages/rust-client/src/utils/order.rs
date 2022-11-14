@@ -1,6 +1,6 @@
 //create the make order and the take order
 
-use crate::utils::build_take_order::*;
+use crate::utils::build_take_order::LimitOrder;
 use crate::utils::create_predicate::*;
 
 use fuels::{
@@ -28,14 +28,12 @@ pub async fn create_order(
         order.taker_token,
         "123123".to_string()
     );
-
-    
     // create the order (fund the predicate)
     let (_tx, _rec) = maker
         .transfer(
             predicate.address(),
             order.maker_amount,
-            AssetId::from(order.maker_token),
+            AssetId::from(order.maker_token.0),
             TxParameters::default(),
         )
         .await
@@ -55,20 +53,4 @@ pub async fn create_order(
         predicate_data: vec![],
     };
     (predicate, predicate_coin_input)
-}
-
-pub async fn cancel_order(    
-    maker: &WalletUnlocked,
-    predicate: Predicate,
-    provider: &Provider
-){
-    maker
-    .transfer(
-            predicate.address(),
-            0,
-            AssetId::from(order.maker_token),
-            TxParameters::default(),
-        )
-        .await
-        .unwrap();
 }
