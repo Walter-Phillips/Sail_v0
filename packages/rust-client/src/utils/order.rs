@@ -1,8 +1,14 @@
 //create the make order and the take order
 
-use crate::utils::build_take_order::*;
-use crate::utils::create_predicate::*;
+use std::ops::Add;
 
+use crate::utils::{
+    build_take_order::*,
+    build_cancel_order::*,
+    create_predicate::*
+};
+
+use fuel_core_interfaces::common::fuel_vm::predicate;
 use fuels::contract::script::Script;
 use fuels::{
     contract::predicate::Predicate,
@@ -79,7 +85,7 @@ pub async fn take_order(
         witness_index: 0,
         maturity: 0,
     };
-    let mut tx = build_take_order::build_take_order_tx(
+    let mut tx = build_take_order_tx(
         order,
         Address::from(taker.address()),
         gas_coin_inputs,
@@ -91,6 +97,49 @@ pub async fn take_order(
 
     // Sign and execute the transaction
     taker.sign_transaction(&mut tx).await.unwrap();
+    let script = Script::new(tx);
+    let _receipts = script.call(provider).await.unwrap();
+
+}
+
+
+pub async fn cancel_order(
+   order: &LimitOrder,
+   maker: &WalletUnlocked,
+   provider: &Provider,
+   gas_coin_inputs: Input,
+   predicate_coin_input: Input,
+   predicate_bytecode: Vec<u8>,
+   predicate_root: Address
+){
+    let predicate_coin = &provider
+    .get_coins(&predicate_root.into(), AssetId::default())
+    .await
+    .unwrap()[0];
+
+    let maker_coin_input: Input = Input::CoinPredicate { 
+        utxo_id: UtxoId::from(predicate_coin.utxo_id.clone()), 
+        owner: maker.address().into(), 
+        amount: predicate_coin.amount.clone().into(), 
+        asset_id: predicate_coin.asset_id.clone().into(), 
+        tx_pointer: TxPointer::default(), 
+        maturity: 0, 
+        predicate: predicate_bytecode,
+        predicate_data: vec![] 
+    };
+
+    let mut tx = build_cancel_order_tx(
+        order,
+        Address::from(maker.address()),
+        gas_coin_inputs,
+        predicate_coin_input,
+        &vec![maker_coin_input],
+        &vec![],
+        TxParameters::default()
+    ).await;
+
+    // Sign and execute the transaction
+    maker.sign_transaction(&mut tx).await.unwrap();
     let script = Script::new(tx);
     let _receipts = script.call(provider).await.unwrap();
 

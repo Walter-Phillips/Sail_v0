@@ -4,4 +4,5 @@ pub mod utils {
     pub mod environment;
     pub mod order;
     pub mod create_predicate;
+    pub mod build_cancel_order;
 }
