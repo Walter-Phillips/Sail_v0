@@ -1,8 +1,6 @@
 use fuels::{
-    prelude::{abigen, TxParameters, WalletUnlocked},
-    tx::{Address, AssetId, Input, Output, Transaction, Receipt},
-    contract::script::Script,
-    signers::Signer,
+    prelude::{abigen, TxParameters},
+    tx::{Address, AssetId, Input, Output, Transaction},
 };
 
 abigen!(
@@ -11,7 +9,7 @@ abigen!(
 );
 
 const MIN_GAS: u64 = 100_000;
-const TAKE_ORDER_SCRIPT_BINARY: &str = "/Users/julian/dev/Sail_v0/packages/contracts/order-script/out/debug/order-script-abi.json";
+const TAKE_ORDER_SCRIPT_BINARY: &str = "/packages/contracts/order-script/out/debug/order-script.bin";
 pub async fn get_take_order_script() -> Vec<u8> {
     let script_bytecode = std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap();
     script_bytecode
@@ -30,7 +28,7 @@ pub async fn build_take_order_tx(
     // build the tx inputs
     let mut tx_inputs: Vec<Input> = Vec::new();
     tx_inputs.push(predicate_coins_input);
-    // tx_inputs.push(gas_coin);
+    tx_inputs.push(gas_coin);
     tx_inputs.append(&mut optional_inputs.to_vec());
 
     // build the tx outputs 

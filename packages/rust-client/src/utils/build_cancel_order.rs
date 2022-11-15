@@ -1,8 +1,6 @@
 use fuels::{
-    prelude::{abigen, TxParameters, WalletUnlocked},
-    tx::{Address, AssetId, Input, Output, Transaction, Receipt},
-    contract::script::Script,
-    signers::Signer,
+    prelude::{TxParameters},
+    tx::{Address, AssetId, Input, Output, Transaction},
 };
 
 use crate::utils::build_take_order::*;
@@ -26,7 +24,7 @@ pub async fn build_cancel_order_tx(
     // build the tx inputs
     let mut tx_inputs: Vec<Input> = Vec::new();
     tx_inputs.push(predicate_coins_input);
-    // tx_inputs.push(gas_coin);
+    tx_inputs.push(gas_coin);
     tx_inputs.append(&mut optional_inputs.to_vec());
 
     // build the tx outputs 

@@ -20,7 +20,6 @@ use client::utils::{
     ) {
         let balance = maker.get_asset_balance(&asset).await.unwrap();
         let predicate_balance = provider.get_asset_balance(predicate, asset).await.unwrap();
-        println!("This is the balance {}", balance);
         assert!(balance == 9999990);
         assert!(predicate_balance == amount);
     }
@@ -83,7 +82,7 @@ use client::utils::{
         };
 
         let swap_coin = &provider
-        .get_spendable_coins(maker.address(), , 1)
+        .get_spendable_coins(maker.address(),0 , 1)
         .await
         .unwrap()[0];
         let swap_coin_utxo_id = swap_coin.utxo_id.clone().into();
@@ -98,7 +97,7 @@ use client::utils::{
         verify_balance_of_maker_and_predicate(
             &maker,
             predicate.address(),
-            AssetId::from_token(Token::B256([0u8; 32])).unwrap(),
+            AssetId::default(),
             10,
             &provider,
         ).await;

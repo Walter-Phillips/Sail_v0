@@ -8,6 +8,9 @@ struct MakeOrder {
 struct TakeOrder {
     order: LimitOrder,
 }
+struct CancelOrder {
+    order: LimitOrder,
+}
 
 impl OrderSettler for Contract {
     fn take(order: LimitOrder) {
@@ -15,5 +18,8 @@ impl OrderSettler for Contract {
     }
     fn make(order: LimitOrder) {
         log(MakeOrder { order })
+    }
+    fn cancel(order: LimitOrder) {
+        log(CancelOrder { order })
     }
 }

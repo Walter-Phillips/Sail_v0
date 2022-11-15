@@ -4,6 +4,7 @@ library order;
 abi OrderSettler {
     fn take(order: LimitOrder);
     fn make(order: LimitOrder);
+    fn cancel(order: LimitOrder);
 }
 
 pub struct LimitOrder {
