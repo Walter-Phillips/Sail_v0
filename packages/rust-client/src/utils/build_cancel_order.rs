@@ -7,7 +7,7 @@ use fuels::{
 
 use crate::utils::build_take_order::*;
 
-const ORDER_SCRIPT_BINARY: &str = "/packages/contracts/order-script/out/debug/order-script.bin";
+const ORDER_SCRIPT_BINARY: &str = "/Users/julian/dev/Sail_v0/packages/contracts/order-script/out/debug/order-script-abi.json";
 pub async fn get_order_script() -> Vec<u8> {
     let script_bytecode = std::fs::read(ORDER_SCRIPT_BINARY).unwrap();
     script_bytecode

@@ -11,10 +11,8 @@ fn handle_init(event: InitEvent) {
 
     let mut makeOrder = match Pool::load(contract_id) {
         Some(t) => t,
-        None => Pool {
-            id: 0,
-          
-            swap_fee: swap_fee,
+        None => LimitOrder {
+            order,
         },
     };
 
