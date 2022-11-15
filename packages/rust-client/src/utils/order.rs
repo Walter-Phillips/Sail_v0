@@ -1,14 +1,11 @@
 //create the make order and the take order
 
-use std::ops::Add;
-
 use crate::utils::{
     build_take_order::*,
     build_cancel_order::*,
     create_predicate::*
 };
 
-use fuel_core_interfaces::common::fuel_vm::predicate;
 use fuels::contract::script::Script;
 use fuels::{
     contract::predicate::Predicate,
@@ -17,7 +14,6 @@ use fuels::{
     tx::{AssetId, Input, TxPointer, UtxoId, Address},
 };
 
-use super::build_take_order;
 
 /// Gets the message to contract predicate
 
@@ -73,9 +69,9 @@ pub async fn take_order(
     predicate_coin_input: Input
 ) {
     let input_coins = &provider
-    .get_coins(&taker.address(), AssetId::default())
-    .await
-    .unwrap()[0];
+        .get_coins(&taker.address(), AssetId::default())
+        .await
+        .unwrap()[0];
     let taker_coin_input = Input::CoinSigned {
         utxo_id: UtxoId::from(input_coins.utxo_id.clone()),
         owner: taker.address().into(),
@@ -85,6 +81,7 @@ pub async fn take_order(
         witness_index: 0,
         maturity: 0,
     };
+    println!("amount: {}, utxoId: {:?}", predicate_coin_input.amount().unwrap(), predicate_coin_input.utxo_id());
     let mut tx = build_take_order_tx(
         order,
         Address::from(taker.address()),
@@ -97,7 +94,8 @@ pub async fn take_order(
 
     // Sign and execute the transaction
     taker.sign_transaction(&mut tx).await.unwrap();
-    let script = Script::new(tx);
+    let script = Script::new(tx.clone());
+    println!("This is what a transaction looks like, {:?}", tx);
     let _receipts = script.call(provider).await.unwrap();
 
 }
@@ -113,9 +111,9 @@ pub async fn cancel_order(
    predicate_root: Address
 ){
     let predicate_coin = &provider
-    .get_coins(&predicate_root.into(), AssetId::default())
-    .await
-    .unwrap()[0];
+        .get_coins(&predicate_root.into(), AssetId::default())
+        .await
+        .unwrap()[0];
 
     let maker_coin_input: Input = Input::CoinPredicate { 
         utxo_id: UtxoId::from(predicate_coin.utxo_id.clone()), 

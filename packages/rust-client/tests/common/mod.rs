@@ -1,5 +1,5 @@
 use fuels::prelude::*;
-use fuels::prelude::Bech32Address;
+
 use fuels::{
     tx::{Address, AssetId},
     test_helpers::{setup_test_provider, Config},

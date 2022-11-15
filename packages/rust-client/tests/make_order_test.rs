@@ -19,7 +19,7 @@ use client::utils::{
     ) {
         let balance = maker.get_asset_balance(&asset).await.unwrap();
         let predicate_balance = provider.get_asset_balance(predicate, asset).await.unwrap();
-        assert!(balance == 0);
+        assert!(balance == 9999990);
         assert!(predicate_balance == amount);
     }
 
@@ -36,11 +36,11 @@ use client::utils::{
             salt: 22,
         };
         
-        let (predicate, predicate_input_coins) = create_order(&maker, &order, &provider).await;
+        let (predicate, _predicate_input_coins) = create_order(&maker, &order, &provider).await;
         verify_balance_of_maker_and_predicate(
             &maker,
             predicate.address(),
-            AssetId::from_token(Token::B256([0u8; 32])).unwrap(),
+            AssetId::default(),
             10,
             &provider,
         ).await;

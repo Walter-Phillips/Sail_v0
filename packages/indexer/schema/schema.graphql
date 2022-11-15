@@ -1,16 +1,20 @@
 schema {
-    query: QueryRoot
+  query: QueryRoot
 }
 
 type QueryRoot {
-    order: MakeOrder
-    order: TakeOrder
+  order: MakeOrder
+  order: TakeOrder
 }
 
 type MakeOrder {
-    order: LimitOrder
+  order: LimitOrder
 }
 
 type TakeOrder {
-    order: LimitOrder
+  order: LimitOrder
+}
+
+type CancelOrder {
+  order: LimitOrder
 }
