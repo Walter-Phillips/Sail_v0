@@ -2,4 +2,6 @@
 
 members = [
     "packages/rust-client",
+    "packages/indexer",
+    "packages/contracts"
 ]
