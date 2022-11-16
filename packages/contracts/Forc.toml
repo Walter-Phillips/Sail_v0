@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "contracts/order",
+    "contracts/order-logger",
+    "contracts/order-script",
+]

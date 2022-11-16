@@ -5,7 +5,7 @@ use fuels::{
 
 abigen!(
     LimitOrderStruct,
-    "/Users/julian/dev/Sail_v0/packages/contracts/order-logger/out/debug/order-logger-abi.json"
+    "packages/contracts/order-logger/out/debug/order-logger-abi.json"
 );
 
 const MIN_GAS: u64 = 100_000;

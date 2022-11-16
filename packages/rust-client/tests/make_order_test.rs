@@ -82,7 +82,7 @@ use client::utils::{
         };
 
         let swap_coin = &provider
-        .get_spendable_coins(maker.address(),0 , 1)
+        .get_spendable_coins(maker.address(), AssetId::default() , 1)
         .await
         .unwrap()[0];
         let swap_coin_utxo_id = swap_coin.utxo_id.clone().into();
