@@ -51,6 +51,7 @@ use client::utils::{
    async fn test_cancel_order() {
     
         let (provider,maker, _, _, _, _, _) = common::setup().await;
+      
 
         let order = LimitOrder {
             maker: maker.address().into(),
@@ -81,14 +82,6 @@ use client::utils::{
             maturity: 0,
         };
 
-        let swap_coin = &provider
-        .get_spendable_coins(maker.address(),0 , 1)
-        .await
-        .unwrap()[0];
-        let swap_coin_utxo_id = swap_coin.utxo_id.clone().into();
-        let swap_coin_amount: u64 = swap_coin.amount.clone().into();
-
-
         let predicate_root: [u8; 32] = (*Contract::root_from_code(&predicate.code())).into();
         let predicate_root = Address::from(predicate_root); 
 
@@ -100,11 +93,7 @@ use client::utils::{
             AssetId::default(),
             10,
             &provider,
-        ).await;
-
-
-        
-        
+        ).await;  
    }
 
     
