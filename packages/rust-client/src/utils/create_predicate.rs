@@ -3,25 +3,19 @@
     Takes in a set of arguments and then creates a sway file for a predicate based on passed args
     Compiles file to a binary and then returns an instance of a predicate from the generated binary
 */
+use fuels::{
+    contract::predicate::Predicate,
+    prelude::{Bech32Address, Bits256},
+    tx::{Address, Contract},
+};
+use regex::{Captures, Regex};
 use std::{
     fs::File,
+    io::{Read, Write},
     path::Path,
-    io::{Write, Read}
-};
-use regex::{Captures , Regex};
-use fuels::{
-    prelude::{Bits256, Bech32Address},
-    tx::{Address, Contract},
-    contract::predicate::Predicate
 };
 
-
-
-
-fn compile_to_bytes(
-    file_name: &str,
-    capture_output: bool,
-) -> Vec<u8> {
+fn compile_to_bytes(file_name: &str, capture_output: bool) -> Vec<u8> {
     tracing::info!(" Compiling {}", file_name);
 
     let mut buf_stdout: Option<gag::BufferRedirect> = None;
@@ -41,7 +35,6 @@ fn compile_to_bytes(
         drop(buf_stdout);
         drop(buf_stderr);
 
-
         if cfg!(windows) {
             let regex = Regex::new(r"\\\\?\\(.*)").unwrap();
             output = regex
@@ -53,8 +46,18 @@ fn compile_to_bytes(
     }
     output.into_bytes()
 }
-fn create_predicate_file(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:&Bech32Address, maker_amount:u64, taker_amount:u64,  maker_token:Bits256, taker_token:Bits256, salt: String) {
-let template =
+fn create_predicate_file(
+    spending_script_hash: String,
+    min_gas: String,
+    output_coin_index: String,
+    maker_address: &Bech32Address,
+    maker_amount: u64,
+    taker_amount: u64,
+    maker_token: Bits256,
+    taker_token: Bits256,
+    salt: String,
+) {
+    let template =
     format!("predicate;
 
     use std::{{
@@ -173,24 +176,23 @@ let template =
     fn output_coin_to(index: u64) -> b256 {{
         __gtf::<b256>(index, GTF_OUTPUT_COIN_TO)
     }}"
-    , &spending_script_hash, &min_gas, &output_coin_index, &maker_address, 
+    ,&spending_script_hash, &min_gas, &output_coin_index, &maker_address,
    &maker_amount, &taker_amount, &maker_token, &taker_token, &salt);
 
-   let path = Path::new("src/utils/tmp/tmp_predicate.sw");
-   let display = path.display();
+    let path = Path::new("src/utils/tmp/tmp_predicate.sw");
+    let display = path.display();
 
-   let mut file = match File::create(&path) {
-       Err(why) => panic!("couldn't create {}: {}", display, why),
-       Ok(file) => file,
-   };
+    let mut file = match File::create(&path) {
+        Err(why) => panic!("couldn't create {}: {}", display, why),
+        Ok(file) => file,
+    };
 
-   // Write the template params to `file`, returns `io::Result<()>`
-   match file.write_all(template.as_bytes()) {
-       Err(why) => panic!("couldn't write to {}: {}", display, why),
-       Ok(_) => println!("successfully wrote to {}", display),
-   }
+    // Write the template params to `file`, returns `io::Result<()>`
+    match file.write_all(template.as_bytes()) {
+        Err(why) => panic!("couldn't write to {}: {}", display, why),
+        Ok(_) => println!("successfully wrote to {}", display),
+    }
 }
-
 
 /*
     Main functionality
@@ -200,9 +202,29 @@ let template =
     Step 3 - Creating an instance of a predicate that is returned
 */
 
-pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin_index:String, maker_address:&Bech32Address, maker_amount:u64, taker_amount:u64,  maker_token:Bits256, taker_token:Bits256, salt: String) -> (Predicate, Vec<u8>, Address) {
+pub fn create_predicate(
+    spending_script_hash: String,
+    min_gas: String,
+    output_coin_index: String,
+    maker_address: &Bech32Address,
+    maker_amount: u64,
+    taker_amount: u64,
+    maker_token: Bits256,
+    taker_token: Bits256,
+    salt: String,
+) -> (Predicate, Vec<u8>, Address) {
     // Step 1
-    let _predicate_file = create_predicate_file(spending_script_hash, min_gas, output_coin_index, maker_address, maker_amount, taker_amount,  maker_token, taker_token, salt);
+    create_predicate_file(
+        spending_script_hash,
+        min_gas,
+        output_coin_index,
+        maker_address,
+        maker_amount,
+        taker_amount,
+        maker_token,
+        taker_token,
+        salt,
+    );
 
     // Step 2
     let predicate_bytecode = compile_to_bytes("src/utils/tmp/tmp_predicate.sw", true);
@@ -214,6 +236,3 @@ pub fn create_predicate(spending_script_hash:String, min_gas:String, output_coin
 
     (predicate, predicate_bytecode, predicate_root)
 }
-
-
-

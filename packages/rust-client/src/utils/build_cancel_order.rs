@@ -1,14 +1,14 @@
 use fuels::{
-    prelude::{TxParameters},
+    prelude::TxParameters,
     tx::{Address, AssetId, Input, Output, Transaction},
 };
 
 use crate::utils::build_take_order::*;
 
-const ORDER_SCRIPT_BINARY: &str = "/Users/julian/dev/Sail_v0/packages/contracts/order-script/out/debug/order-script-abi.json";
+const ORDER_SCRIPT_BINARY: &str =
+    "/Users/julian/dev/Sail_v0/packages/contracts/order-script/out/debug/order-script-abi.json";
 pub async fn get_order_script() -> Vec<u8> {
-    let script_bytecode = std::fs::read(ORDER_SCRIPT_BINARY).unwrap();
-    script_bytecode
+    std::fs::read(ORDER_SCRIPT_BINARY).unwrap()
 }
 
 pub async fn build_cancel_order_tx(
@@ -27,7 +27,7 @@ pub async fn build_cancel_order_tx(
     tx_inputs.push(gas_coin);
     tx_inputs.append(&mut optional_inputs.to_vec());
 
-    // build the tx outputs 
+    // build the tx outputs
     let mut tx_outputs: Vec<Output> = Vec::new();
     tx_outputs.push(Output::Coin {
         to: maker,
@@ -48,4 +48,4 @@ pub async fn build_cancel_order_tx(
         witnesses: vec![],
         metadata: None,
     }
-}   
+}

@@ -5,14 +5,14 @@ use fuels::{
 
 abigen!(
     LimitOrderStruct,
-    "/Users/julian/dev/Sail_v0/packages/contracts/order-logger/out/debug/order-logger-abi.json"
+    "packages/contracts/order-logger/out/debug/order-logger-abi.json"
 );
 
 const MIN_GAS: u64 = 100_000;
-const TAKE_ORDER_SCRIPT_BINARY: &str = "/packages/contracts/order-script/out/debug/order-script.bin";
+const TAKE_ORDER_SCRIPT_BINARY: &str =
+    "/packages/contracts/order-script/out/debug/order-script.bin";
 pub async fn get_take_order_script() -> Vec<u8> {
-    let script_bytecode = std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap();
-    script_bytecode
+    std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap()
 }
 
 pub async fn build_take_order_tx(
@@ -31,7 +31,7 @@ pub async fn build_take_order_tx(
     tx_inputs.push(gas_coin);
     tx_inputs.append(&mut optional_inputs.to_vec());
 
-    // build the tx outputs 
+    // build the tx outputs
     let mut tx_outputs: Vec<Output> = Vec::new();
     tx_outputs.push(Output::Coin {
         to: order.maker,
