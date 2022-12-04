@@ -35,5 +35,5 @@ as this was something he had been hacking on. It's worth taking a look at if thi
 
 ## Future Development
 
-We've our development to a new  private repo. We'll be open-sourcing everything we're working on in the near future.
+We've moved our development to a new  private repo. We'll be open-sourcing everything we're working on in the near future.
 If you have any questions for the time being, please [Contact Us](mailto:support@sail.exchange). We'll have updates soon!!!
