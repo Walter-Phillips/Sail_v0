@@ -1,7 +1,8 @@
 [workspace]
 
 members = [
-    "contracts/order",
-    "contracts/order-logger",
-    "contracts/order-script",
+    "order",
+    "order-logger",
+    "order-script",
+    "order-predicate",
 ]

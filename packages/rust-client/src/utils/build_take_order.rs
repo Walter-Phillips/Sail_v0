@@ -5,12 +5,12 @@ use fuels::{
 
 abigen!(
     LimitOrderStruct,
-    "packages/contracts/order-logger/out/debug/order-logger-abi.json"
+    "/Users/walterphillips/BlockchainDev/Sail_v0/packages/contracts/order-logger/out/debug/order-logger-abi.json"
 );
 
 const MIN_GAS: u64 = 100_000;
 const TAKE_ORDER_SCRIPT_BINARY: &str =
-    "/packages/contracts/order-script/out/debug/order-script.bin";
+    "/Users/walterphillips/BlockchainDev/Sail_v0/packages/contracts/order-script/out/debug/order-script.bin";
 pub async fn get_take_order_script() -> Vec<u8> {
     std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap()
 }
@@ -41,8 +41,19 @@ pub async fn build_take_order_tx(
     tx_outputs.push(Output::Coin {
         to: taker,
         amount: order.maker_amount,
-        asset_id: AssetId::from(order.taker_token.0),
+        asset_id: AssetId::from(order.maker_token.0),
     });
+    // tx_outputs.push(Output::Change {
+    //     to: taker,
+    //     amount: 0,
+    //     asset_id: AssetId::default(),
+    // });
+    // tx_outputs.push(Output::Change {
+    //     to: taker,
+    //     amount: 0,
+    //     asset_id: AssetId::from(order.taker_token.0),
+    // });
+
     tx_outputs.append(&mut optional_outputs.to_vec());
 
     Transaction::Script {

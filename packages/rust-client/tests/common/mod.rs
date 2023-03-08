@@ -49,13 +49,15 @@ pub async fn setup() -> (
         })
         .collect::<Vec<_>>();
 
+        let provider_config = Config {
+            utxo_validation: true,
+            predicates: true,
+            ..Config::local_node()
+        };
     let (provider, _) = setup_test_provider(
         all_coins,
         vec![],
-        Some(Config {
-            utxo_validation: true,
-            ..Config::local_node()
-        }),
+        Some(provider_config),
     )
     .await;
 

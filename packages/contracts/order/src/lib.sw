@@ -5,6 +5,7 @@ abi OrderSettler {
     fn take(order: LimitOrder);
     fn make(order: LimitOrder);
     fn cancel(order: LimitOrder);
+    fn update(order: LimitOrder);
 }
 
 pub struct LimitOrder {

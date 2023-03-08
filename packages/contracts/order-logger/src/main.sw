@@ -11,6 +11,9 @@ struct TakeOrder {
 struct CancelOrder {
     order: LimitOrder,
 }
+struct UpdateOrder {
+    order: LimitOrder,
+}
 
 impl OrderSettler for Contract {
     fn take(order: LimitOrder) {
@@ -22,4 +25,15 @@ impl OrderSettler for Contract {
     fn cancel(order: LimitOrder) {
         log(CancelOrder { order })
     }
+    fn update(order: LimitOrder) {
+        log(UpdateOrder { order })
+    }
+}
+
+fn deposit() {
+    // ...
+}
+
+fn withdraw() {
+    // ...
 }

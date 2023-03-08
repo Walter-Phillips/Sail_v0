@@ -46,6 +46,10 @@ fn compile_to_bytes(file_name: &str, capture_output: bool) -> Vec<u8> {
     }
     output.into_bytes()
 }
+
+
+
+
 fn create_predicate_file(
     spending_script_hash: String,
     min_gas: String,
