@@ -32,3 +32,8 @@ with instructions for how to play around with the orderbook.
 
 We want to give a huge shoutout to everyone that helped us the last two days. We want to call out Ryan Sproule in particular he gave us some reference code
 as this was something he had been hacking on. It's worth taking a look at if this stuff interests you at all. [Ryan's Implementation](https://github.com/BlockchainCap/fuel-order-book)
+
+## Future Development
+
+We've moved our development to a new  private repo. We'll be open-sourcing everything we're working on in the near future.
+If you have any questions for the time being, please [Contact Us](mailto:support@sail.exchange). We'll have updates soon!!!
